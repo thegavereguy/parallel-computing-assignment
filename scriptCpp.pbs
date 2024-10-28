@@ -1,0 +1,27 @@
+#!/bin/bash
+# Job name
+#PBS -N Cppjob
+# Output files
+#PBS -o ./Cppjob.o
+#PBS -e ./Cppjob.e
+# Queue name
+#PBS -q short_cpuQ
+# Set the maximum wall time
+#PBS -l walltime=0:10:00
+# Number of nodes, cpus, mpi processors and amount of memory
+#PBS -l select=1:ncpus=1:mem=1mb
+
+# Modules for C
+module load gcc91
+g++() {
+    g++-9.1.0 "$@"
+}
+g++ --version
+# Select the working directory
+cd /home/username/dir
+
+# The code should be compiled before submitting the job
+cmake build
+
+# Run code
+cmake run
