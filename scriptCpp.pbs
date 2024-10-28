@@ -18,10 +18,11 @@ g++() {
 }
 g++ --version
 # Select the working directory
-cd /home/username/dir
+cd /home/enrico.dallacia/assignment
 
 # The code should be compiled before submitting the job
-cmake build
+cmake -S . -B build
+cd build
+make
 
-# Run code
-cmake run
+./out/assignment
