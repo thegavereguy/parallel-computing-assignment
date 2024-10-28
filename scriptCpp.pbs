@@ -16,6 +16,9 @@ module load gcc91
 g++() {
     g++-9.1.0 "$@"
 }
+
+module load cmake-3.15.4
+
 g++ --version
 # Select the working directory
 cd /home/enrico.dallacia/assignment
