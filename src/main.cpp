@@ -1,6 +1,9 @@
 #include <iostream>
 
 int main() {
-  std::cout << "Hello, World!" << std::endl;
-  return 69;
+  // initialize a random variable and print it
+  int x = 5;
+  x     = x + 1;
+  std::cout << "value of variable: " << x << std::endl;
+  return 0;
 }
