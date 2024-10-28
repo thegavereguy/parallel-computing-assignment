@@ -1,13 +1,13 @@
 #!/bin/bash
 # Job name
-#PBS -N Cppjob
+#PBS -N assignment
 # Output files
-#PBS -o ./Cppjob.o
-#PBS -e ./Cppjob.e
+#PBS -o ./assignment.o
+#PBS -e ./assignment.e
 # Queue name
 #PBS -q short_cpuQ
 # Set the maximum wall time
-#PBS -l walltime=0:10:00
+#PBS -l walltime=0:01:00
 # Number of nodes, cpus, mpi processors and amount of memory
 #PBS -l select=1:ncpus=1:mem=1mb
 
