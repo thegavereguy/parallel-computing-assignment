@@ -2,11 +2,16 @@
 
 #include <iostream>
 
-int main() {
-  // initialize a random variable and print it
-  int x = 5;
-  x     = x + 1;
-  x     = sum(2, 54);
-  std::cout << "value of variable: " << x << std::endl;
+int main(int argc, char** argv) {
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " <int> <int>" << std::endl;
+    return 1;
+  }
+  int a = std::stoi(argv[1]);
+  int b = std::stoi(argv[2]);
+
+  std::cout << "Sum of " << a << " and " << b << " is " << sum(a, b)
+            << std::endl;
+
   return 0;
 }
