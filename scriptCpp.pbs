@@ -28,4 +28,4 @@ cmake -S . -B build
 cd build
 make
 
-./app/app 1 2
+./apps/app 1 2
