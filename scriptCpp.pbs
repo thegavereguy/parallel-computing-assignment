@@ -28,4 +28,4 @@ cmake -S . -B build
 cd build
 make
 
-./out/assignment
+./app/app 1 2
