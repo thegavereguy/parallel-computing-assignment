@@ -24,8 +24,9 @@ g++ --version
 cd /home/enrico.dallacia/assignment
 
 # The code should be compiled before submitting the job
-cmake -S . -B build
+
 cd build
+cmake ..
 make
 
-./apps/app 1 2
+./apps/app
