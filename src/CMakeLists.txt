@@ -1,3 +1,5 @@
 add_library(test_library lib.cpp ../include/lib/lib.h)
+add_library(matrix_library matrix.cpp ../include/lib/matrix.h)
 
 target_include_directories(test_library PUBLIC ../include)
+target_include_directories(matrix_library PUBLIC ../include)

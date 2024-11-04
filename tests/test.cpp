@@ -1,4 +1,5 @@
 #include <lib/lib.h>
+#include <lib/matrix.h>
 
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/benchmark/catch_clock.hpp>
@@ -84,5 +85,89 @@ TEST_CASE("Merge sort bench", "[merge_sort]") {
       arr[i] = rand() % (n * 100);
     }
     meter.measure([arr, n] { merge_sort(arr, 0, n - 1); });
+  };
+}
+
+TEST_CASE("Matrix transposition", "[matrix]") {
+  int n      = 10;
+  double** A = new double*[n];
+  double** B = new double*[n];
+  for (int i = 0; i < n; i++) {
+    A[i] = new double[n];
+    B[i] = new double[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_sequential(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i][j] == B[j][i]);
+    }
+  }
+
+  BENCHMARK_ADVANCED("matrix transposition 10")(
+      Catch::Benchmark::Chronometer meter) {
+    int n      = 10;
+    double** A = new double*[n];
+    double** B = new double*[n];
+    for (int i = 0; i < n; i++) {
+      A[i] = new double[n];
+      B[i] = new double[n];
+      for (int j = 0; j < n; j++) {
+        A[i][j] = i * n + j;
+      }
+    }
+    meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+    delete[] A;
+    delete[] B;
+  };
+  BENCHMARK_ADVANCED("matrix transposition 100")(
+      Catch::Benchmark::Chronometer meter) {
+    int n      = 100;
+    double** A = new double*[n];
+    double** B = new double*[n];
+    for (int i = 0; i < n; i++) {
+      A[i] = new double[n];
+      B[i] = new double[n];
+      for (int j = 0; j < n; j++) {
+        A[i][j] = i * n + j;
+      }
+    }
+    meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+    delete[] A;
+    delete[] B;
+  };
+  BENCHMARK_ADVANCED("matrix transposition 1000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n      = 1000;
+    double** A = new double*[n];
+    double** B = new double*[n];
+    for (int i = 0; i < n; i++) {
+      A[i] = new double[n];
+      B[i] = new double[n];
+      for (int j = 0; j < n; j++) {
+        A[i][j] = i * n + j;
+      }
+    }
+    meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+    delete[] A;
+    delete[] B;
+  };
+  BENCHMARK_ADVANCED("matrix transposition 5000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n      = 5000;
+    double** A = new double*[n];
+    double** B = new double*[n];
+    for (int i = 0; i < n; i++) {
+      A[i] = new double[n];
+      B[i] = new double[n];
+      for (int j = 0; j < n; j++) {
+        A[i][j] = i * n + j;
+      }
+    }
+    meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+    delete[] A;
+    delete[] B;
   };
 }
