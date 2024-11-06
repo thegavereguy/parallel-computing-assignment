@@ -61,7 +61,7 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   delete[] name;
 }
 
-TEST_CASE("Matrix transpositoin parallel", "mat_trans_par") {
+TEST_CASE("Matrix transposition parallel", "mat_trans_par") {
   int n   = 10;
   int** A = new int*[n];
   int** B = new int*[n];
