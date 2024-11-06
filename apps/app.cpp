@@ -11,5 +11,7 @@ int main(int argc, char** argv) {
   std::cout << "Product of " << a << " and " << b << " is " << mul(a, b)
             << std::endl;
 
+  parallel_test();
+
   return 0;
 }

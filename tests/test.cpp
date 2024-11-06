@@ -154,9 +154,9 @@ TEST_CASE("Matrix transposition", "[matrix]") {
     delete[] A;
     delete[] B;
   };
-  BENCHMARK_ADVANCED("matrix transposition 5000")(
+  BENCHMARK_ADVANCED("matrix transposition 1500")(
       Catch::Benchmark::Chronometer meter) {
-    int n      = 5000;
+    int n      = 1500;
     double** A = new double*[n];
     double** B = new double*[n];
     for (int i = 0; i < n; i++) {

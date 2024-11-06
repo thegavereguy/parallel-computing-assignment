@@ -1,4 +1,8 @@
 #include <lib/lib.h>
+#include <omp.h>
+
+#include <iostream>
+
 int sum(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
 
@@ -28,10 +32,15 @@ void merge_sort(double *arr, int l, int r) {
   }
 }
 
-void transpose_sequential(int n, double **A, double **B) {
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      B[i][j] = A[j][i];
-    }
+void parallel_test() {
+  int shared_var = 0;
+
+#pragma omp parallel num_threads(4)
+  {
+    int tid = omp_get_thread_num();
+    // std::cout << "Thread " << tid << " is running" << std::endl;
+    printf("Thread %d is running\n", tid);
+    shared_var += tid;
   }
+  std::cout << "Shared var: " << shared_var << std::endl;
 }
