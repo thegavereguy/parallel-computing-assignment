@@ -44,3 +44,43 @@ void parallel_test() {
   }
   std::cout << "Shared var: " << shared_var << std::endl;
 }
+
+float calculate_pi(double n) {
+  int i;
+  double x, sum = 0.0, pi = 0.0;
+  double step = 1.0 / (double)n;
+  for (i = 0; i < n; i++) {
+    x   = (i + 0.5) * step;
+    sum = sum + 4.0 / (1.0 + x * x);
+  }
+  return sum;
+}
+
+float calculate_pi_parallel(double n) {
+  int i;
+  double x, sum = 0.0, pi = 0.0;
+  double step = 1.0 / (double)n;
+
+  struct timespec start, end;
+
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+#pragma omp parallel
+  {
+    for (i = 0; i < n; i++) {
+      x   = (i + 0.5) * step;
+      sum = sum + 4.0 / (1.0 + x * x);
+    }
+  }
+
+  clock_gettime(CLOCK_MONOTONIC, &end);
+
+  long seconds_ts              = end.tv_sec - start.tv_sec;
+  long nanoseconds_ts          = end.tv_nsec - start.tv_nsec;
+  double elapsed_clock_gettime = seconds_ts + nanoseconds_ts * 1e-9;
+
+  std::cout << "Elapsed time using clock_gettime: " << elapsed_clock_gettime
+            << " seconds" << std::endl;
+
+  return sum;
+}

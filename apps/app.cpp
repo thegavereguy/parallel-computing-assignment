@@ -12,6 +12,9 @@ int main(int argc, char** argv) {
             << std::endl;
 
   parallel_test();
+  std::cout << "Pi: " << calculate_pi(1000000000) << std::endl;
+  std::cout << "Pi parallel: " << calculate_pi_parallel(1000000000)
+            << std::endl;
 
   return 0;
 }

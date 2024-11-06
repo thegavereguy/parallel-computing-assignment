@@ -6,3 +6,5 @@ void merge_sort(double *arr, int l, int r);
 void merge(double *arr, int l, int m, int r);
 
 void parallel_test();
+float calculate_pi(double n);
+float calculate_pi_parallel(double n);
