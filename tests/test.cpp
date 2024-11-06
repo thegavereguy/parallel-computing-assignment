@@ -166,7 +166,7 @@ TEST_CASE("Matrix transposition", "[matrix]") {
         A[i][j] = i * n + j;
       }
     }
-    meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+    meter.measure([n, A, B] { return transpose_sequential(n, A, B); });
     delete[] A;
     delete[] B;
   };
