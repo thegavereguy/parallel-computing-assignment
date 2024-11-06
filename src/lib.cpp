@@ -84,3 +84,20 @@ float calculate_pi_parallel(double n) {
 
   return sum;
 }
+
+double array_sum_sequential(int *v, int n) {
+  double sum = 0;
+  for (int i = 0; i < n; i++) sum += v[i];
+  return sum;
+}
+
+double array_sum_parallel(int *v, int n) {
+  double sum = 0;
+
+#pragma omp parallel for reduction(+ : sum) num_threads(4)
+  for (int i = 0; i < n; i++) {
+    sum += v[i];
+  }
+
+  return sum;
+}

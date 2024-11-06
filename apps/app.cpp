@@ -1,4 +1,6 @@
 #include <lib/lib.h>
+#include <lib/matrix.h>
+#include <lib/tools.h>
 
 #include <iostream>
 
@@ -12,9 +14,26 @@ int main(int argc, char** argv) {
             << std::endl;
 
   parallel_test();
-  std::cout << "Pi: " << calculate_pi(1000000000) << std::endl;
-  std::cout << "Pi parallel: " << calculate_pi_parallel(1000000000)
-            << std::endl;
+  std::cout << "Pi: " << calculate_pi_parallel(10000000) << std::endl;
+
+  int n   = 10;
+  int** A = new int*[n];
+  int** B = new int*[n];
+  for (int i = 0; i < n; i++) {
+    A[i] = new int[n];
+    B[i] = new int[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_sequential(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      std::cout << B[i][j] << " ";
+    }
+  }
+  deallocate(A, n);
+  deallocate(B, n);
 
   return 0;
 }

@@ -1,5 +1,6 @@
 #include <lib/lib.h>
 #include <lib/matrix.h>
+#include <lib/tools.h>
 
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/benchmark/catch_clock.hpp>
@@ -55,6 +56,7 @@ TEST_CASE("Merge sort bench", "[merge_sort]") {
   for (int i = 0; i < n; i++) {
     arr[i] = rand() % 100000;
   }
+  delete[] arr;
 
   // BENCHMARK("merge_sort") { merge_sort(arr, 0, n - 1); };
   BENCHMARK_ADVANCED("merge_sort 1000")(Catch::Benchmark::Chronometer meter) {
@@ -65,6 +67,7 @@ TEST_CASE("Merge sort bench", "[merge_sort]") {
       arr[i] = rand() % 100000;
     }
     meter.measure([arr, n] { merge_sort(arr, 0, n - 1); });
+    delete[] arr;
   };
   BENCHMARK_ADVANCED("merge_sort 10000")(Catch::Benchmark::Chronometer meter) {
     int n = 10000;
@@ -74,6 +77,7 @@ TEST_CASE("Merge sort bench", "[merge_sort]") {
       arr[i] = rand() % 10000;
     }
     meter.measure([arr, n] { merge_sort(arr, 0, n - 1); });
+    delete[] arr;
   };
 
   BENCHMARK_ADVANCED("merge_sort 1000000")(
@@ -85,16 +89,17 @@ TEST_CASE("Merge sort bench", "[merge_sort]") {
       arr[i] = rand() % (n * 100);
     }
     meter.measure([arr, n] { merge_sort(arr, 0, n - 1); });
+    delete[] arr;
   };
 }
 
 TEST_CASE("Matrix transposition", "[matrix]") {
-  int n      = 10;
-  double** A = new double*[n];
-  double** B = new double*[n];
+  int n   = 10;
+  int** A = new int*[n];
+  int** B = new int*[n];
   for (int i = 0; i < n; i++) {
-    A[i] = new double[n];
-    B[i] = new double[n];
+    A[i] = new int[n];
+    B[i] = new int[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }
@@ -105,69 +110,148 @@ TEST_CASE("Matrix transposition", "[matrix]") {
       REQUIRE(A[i][j] == B[j][i]);
     }
   }
+  deallocate(A, n);
+  deallocate(B, n);
 
   BENCHMARK_ADVANCED("matrix transposition 10")(
       Catch::Benchmark::Chronometer meter) {
-    int n      = 10;
-    double** A = new double*[n];
-    double** B = new double*[n];
+    int n   = 10;
+    int** A = new int*[n];
+    int** B = new int*[n];
     for (int i = 0; i < n; i++) {
-      A[i] = new double[n];
-      B[i] = new double[n];
+      A[i] = new int[n]();
+      B[i] = new int[n]();
       for (int j = 0; j < n; j++) {
         A[i][j] = i * n + j;
       }
     }
     meter.measure([n, A, B] { transpose_sequential(n, A, B); });
-    delete[] A;
-    delete[] B;
+    deallocate(A, n);
+    deallocate(B, n);
   };
   BENCHMARK_ADVANCED("matrix transposition 100")(
       Catch::Benchmark::Chronometer meter) {
-    int n      = 100;
-    double** A = new double*[n];
-    double** B = new double*[n];
+    int n   = 100;
+    int** A = new int*[n];
+    int** B = new int*[n];
     for (int i = 0; i < n; i++) {
-      A[i] = new double[n];
-      B[i] = new double[n];
+      A[i] = new int[n]();
+      B[i] = new int[n]();
       for (int j = 0; j < n; j++) {
         A[i][j] = i * n + j;
       }
     }
     meter.measure([n, A, B] { transpose_sequential(n, A, B); });
-    delete[] A;
-    delete[] B;
+    deallocate(A, n);
+    deallocate(B, n);
   };
   BENCHMARK_ADVANCED("matrix transposition 1000")(
       Catch::Benchmark::Chronometer meter) {
-    int n      = 1000;
-    double** A = new double*[n];
-    double** B = new double*[n];
+    int n   = 1000;
+    int** A = new int*[n];
+    int** B = new int*[n];
     for (int i = 0; i < n; i++) {
-      A[i] = new double[n];
-      B[i] = new double[n];
+      A[i] = new int[n]();
+      B[i] = new int[n]();
       for (int j = 0; j < n; j++) {
         A[i][j] = i * n + j;
       }
     }
     meter.measure([n, A, B] { transpose_sequential(n, A, B); });
-    delete[] A;
-    delete[] B;
+    deallocate(A, n);
+    deallocate(B, n);
   };
-  BENCHMARK_ADVANCED("matrix transposition 1500")(
+}
+
+TEST_CASE("Array sum", "[array_sum]") {
+  int n  = 10;
+  int* v = new int[n];
+  for (int i = 0; i < n; i++) {
+    v[i] = i;
+  }
+  REQUIRE(array_sum_sequential(v, n) == 45);
+  REQUIRE(array_sum_parallel(v, n) == 45);
+
+  delete[] v;
+
+  BENCHMARK_ADVANCED("array sum sequential 1000")(
       Catch::Benchmark::Chronometer meter) {
-    int n      = 1500;
-    double** A = new double*[n];
-    double** B = new double*[n];
+    int n  = 1000;
+    int* v = new int[n];
     for (int i = 0; i < n; i++) {
-      A[i] = new double[n];
-      B[i] = new double[n];
-      for (int j = 0; j < n; j++) {
-        A[i][j] = i * n + j;
-      }
+      v[i] = i;
     }
-    meter.measure([n, A, B] { return transpose_sequential(n, A, B); });
-    delete[] A;
-    delete[] B;
+    meter.measure([v, n] { return array_sum_sequential(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum sequential 10000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 10000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_sequential(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum sequential 100000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 100000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_sequential(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum sequential 1000000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 1000000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_sequential(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum parallel 1000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 1000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_parallel(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum parallel 10000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 10000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_parallel(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum parallel 100000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 100000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_parallel(v, n); });
+    delete[] v;
+  };
+  BENCHMARK_ADVANCED("array sum parallel 1000000")(
+      Catch::Benchmark::Chronometer meter) {
+    int n  = 1000000;
+    int* v = new int[n];
+    for (int i = 0; i < n; i++) {
+      v[i] = i;
+    }
+    meter.measure([v, n] { return array_sum_parallel(v, n); });
+    delete[] v;
   };
 }
