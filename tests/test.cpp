@@ -41,8 +41,9 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
 
   /// Sequential transposition
   for (int i : MAT_TRANS_CASES) {
-    sprintf(name, "mat trans seq (%d)", i);
+    // sprintf(name, "mat trans seq (%d)", i);
 
+    sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
       int n   = i;
       int** A = new int*[n];
@@ -63,7 +64,7 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   delete[] name;
 }
 
-TEST_CASE("Matrix transposition parallel", "mat_trans_par") {
+TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
   int n   = 10;
   int** A = new int*[n];
   int** B = new int*[n];
@@ -88,8 +89,9 @@ TEST_CASE("Matrix transposition parallel", "mat_trans_par") {
 
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
-    sprintf(name, "mat trans par (%d)", i);
+    // sprintf(name, "mat trans par (%d)", i);
 
+    sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
       int n   = i;
       int** A = new int*[n];
@@ -110,7 +112,7 @@ TEST_CASE("Matrix transposition parallel", "mat_trans_par") {
   delete[] name;
 }
 
-TEST_CASE("Matrix transposition parallel collapse", "mat_trans_par_col") {
+TEST_CASE("Matrix transposition parallel collapse", "[mat_trans_par_col]") {
   int n   = 10;
   int** A = new int*[n];
   int** B = new int*[n];
@@ -135,7 +137,8 @@ TEST_CASE("Matrix transposition parallel collapse", "mat_trans_par_col") {
 
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
-    sprintf(name, "mat trans par col(%d)", i);
+    // sprintf(name, "mat trans par col(%d)", i);
+    sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
       int n   = i;
@@ -168,19 +171,18 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
 
   void testCasePartialStarting(Catch::TestCaseInfo const& testInfo,
                                uint64_t partNumber) override {
-    std::cout << "TestCaseStartingPartial: " << testInfo.name << '#'
-              << partNumber << '\n';
+    // std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
+    std::cout << "DIMENSION, MEAN" << '\n';
   }
 
   void testCasePartialEnded(Catch::TestCaseStats const& testCaseStats,
                             uint64_t partNumber) override {
-    std::cout << "TestCasePartialEnded: " << testCaseStats.testInfo->name << '#'
-              << partNumber << '\n';
+    // std::cout << "TestCaseEnded: " << testCaseStats.testInfo->name << '#' <<
+    // partNumber << '\n';
   }
 
   void benchmarkEnded(Catch::BenchmarkStats<> const& stats) override {
-    std::cout << "BenchmarkEnded: " << stats.info.name << " "
-              << stats.mean.point.count() / 1e6 << "ms" << '\n';
+    std::cout << stats.info.name << "," << stats.mean.point.count() << '\n';
   }
 };
 
