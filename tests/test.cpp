@@ -106,6 +106,53 @@ TEST_CASE("Matrix transposition parallel", "mat_trans_par") {
   delete[] name;
 }
 
+TEST_CASE("Matrix transposition parallel collapse", "mat_trans_par_col") {
+  int n   = 10;
+  int** A = new int*[n];
+  int** B = new int*[n];
+
+  for (int i = 0; i < n; i++) {
+    A[i] = new int[n];
+    B[i] = new int[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_parallel_collapse(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i][j] == B[j][i]);
+    }
+  }
+  deallocate(A, n);
+  deallocate(B, n);
+
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    sprintf(name, "mat trans par col(%d)", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n   = i;
+      int** A = new int*[n];
+      int** B = new int*[n];
+      for (int i = 0; i < n; i++) {
+        A[i] = new int[n]();
+        B[i] = new int[n]();
+        for (int j = 0; j < n; j++) {
+          A[i][j] = i * n + j;
+        }
+      }
+      meter.measure([n, A, B] { transpose_parallel_collapse(n, A, B); });
+      deallocate(A, n);
+      deallocate(B, n);
+    };
+  }
+
+  delete[] name;
+}
+
 // TEST_CASE("Array sum", "[array_sum]") {
 //   int n  = 10;
 //   int* v = new int[n];
