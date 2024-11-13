@@ -9,7 +9,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cstring>
 
-const int MAT_TRANS_CASES[6] = {10, 100, 1000, 1500, 1750, 2000};
+const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64,
+                                 128, 256, 512, 1024, 2048, 4096};
 
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   int n   = 10;
