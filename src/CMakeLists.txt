@@ -11,3 +11,5 @@ if(OpenMP_CXX_FOUND)
     target_link_libraries(test_library PUBLIC OpenMP::OpenMP_CXX)
     target_link_libraries(matrix_library PUBLIC OpenMP::OpenMP_CXX)
 endif()
+
+
