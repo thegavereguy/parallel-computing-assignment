@@ -104,7 +104,7 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
   }
 
   void benchmarkPreparing(Catch::StringRef str) override {
-    std::cout << "DIMENSION, MEAN" << '\n';
+    std::cout << "DIMENSION,MEAN" << '\n';
   }
 };
 

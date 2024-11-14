@@ -12,16 +12,19 @@
 #include <cstring>
 #include <iostream>
 
-const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64,
-                                 128, 256, 512, 1024, 2048, 4096};
+// const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64, 128, 256,
+// 512, 1024, 2048, 4096};
 
+const int MAT_TRANS_CASES[38] = {
+    2,   4,   8,   12,  16,  20,   24,   28,   32,   48,   64,   80,  96,
+    112, 128, 144, 160, 176, 192,  208,  224,  240,  256,  288,  320, 352,
+    384, 416, 448, 480, 512, 1024, 1536, 2048, 2560, 3072, 3584, 4096};
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   char* name = new char[100];
 
   /// Sequential transposition
   for (int i : MAT_TRANS_CASES) {
-    // sprintf(name, "mat trans seq (%d)", i);
-
+    // for (int i = 2; i < 2048; i += 255) {
     sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
       int n   = i;
@@ -48,7 +51,8 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
 
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
-    // sprintf(name, "mat trans par (%d)", i);
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "mat trans par (%d)", i);
 
     sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
@@ -77,7 +81,8 @@ TEST_CASE("Matrix transposition parallel with collapse",
 
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
-    // sprintf(name, "mat trans par col(%d)", i);
+    // for (int i = 2; i < 2048; i += 255) {
+    //  sprintf(name, "mat trans par col(%d)", i);
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
@@ -110,7 +115,7 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
   void testCasePartialStarting(Catch::TestCaseInfo const& testInfo,
                                uint64_t partNumber) override {
     // std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
-    std::cout << "DIMENSION, MEAN" << '\n';
+    std::cout << "DIMENSION,MEAN,SD" << '\n';
   }
 
   void testCasePartialEnded(Catch::TestCaseStats const& testCaseStats,
@@ -120,7 +125,8 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
   }
 
   void benchmarkEnded(Catch::BenchmarkStats<> const& stats) override {
-    std::cout << stats.info.name << "," << stats.mean.point.count() << '\n';
+    std::cout << stats.info.name << "," << stats.mean.point.count() / 1e6 << ","
+              << stats.standardDeviation.point.count() / 1e6 << '\n';
   }
 };
 CATCH_REGISTER_REPORTER("csv", PartialCSVReporter)
