@@ -39,10 +39,10 @@ make clean
 cmake ..
 make -j8
 
+# Set the number of threads to be used
 export OMP_NUM_THREADS=8
-#./tests/tests --benchmark-samples=10 -r csv
 
 # Execute the tests and save the results
-./testScript.sh
+./scripts/runBenchmarks.sh
 
 
