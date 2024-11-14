@@ -40,4 +40,9 @@ cmake ..
 make -j8
 
 export OMP_NUM_THREADS=8
-./tests/tests --benchmark-samples=10 -r csv
+#./tests/tests --benchmark-samples=10 -r csv
+
+# Execute the tests and save the results
+./testScript.sh
+
+
