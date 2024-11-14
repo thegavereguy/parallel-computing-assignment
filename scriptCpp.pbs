@@ -1,32 +1,43 @@
 #!/bin/bash
 # Job name
-#PBS -N assignment
+#PBS -N pc_assignment
 # Output files
 #PBS -o ./assignment.o
 #PBS -e ./assignment.e
 # Queue name
 #PBS -q short_cpuQ
 # Set the maximum wall time
-#PBS -l walltime=0:02:00
+#PBS -l walltime=0:05:00
 # Number of nodes, cpus, mpi processors and amount of memory
 #PBS -l select=1:ncpus=8:mem=1gb
 
-# Modules for C
+
+# Modules for C++ compiler and CMake
 module load gcc91
+module load cmake-3.15.4
 g++() {
     g++-9.1.0 "$@"
 }
 
-module load cmake-3.15.4
-
-g++ --version
 # Select the working directory
 cd /home/enrico.dallacia/assignment
 
-# The code should be compiled before submitting the job
+# Create directory for the results
+mkdir results
 
+# Print information about the cpu
+lscpu > results/cpu_info.txt
+
+# Creta a build directory if it does not exist
+mkdir build
 cd build
-cmake ..
-make
 
+# Remove the previous build
+make clean
+
+# Compile the code
+cmake ..
+make -j8
+
+export OMP_NUM_THREADS=8
 ./tests/tests --benchmark-samples=10 -r csv
