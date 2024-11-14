@@ -7,9 +7,9 @@
 # Queue name
 #PBS -q short_cpuQ
 # Set the maximum wall time
-#PBS -l walltime=0:01:00
+#PBS -l walltime=0:02:00
 # Number of nodes, cpus, mpi processors and amount of memory
-#PBS -l select=1:ncpus=1:mem=1mb
+#PBS -l select=1:ncpus=8:mem=1gb
 
 # Modules for C
 module load gcc91
@@ -29,4 +29,4 @@ cd build
 cmake ..
 make
 
-./apps/app
+./tests/tests --benchmark-samples=10 -r csv
