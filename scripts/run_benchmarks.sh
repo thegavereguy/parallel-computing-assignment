@@ -12,9 +12,10 @@ if [ -z "$BENCHMARK_SAMPLES" ]; then
 	export BENCHMARK_SAMPLES=10;
 fi
 
+echo "Running $BENCHMARK_SAMPLES samples per benchmark";
 for i in ${array[@]}; do
 		echo "Running benchmark for [$i] with $OMP_NUM_THREADS threads";
-		eval "./build/tests/tests" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES"> results/"$i"".$OMP_NUM_THREADS.txt";
+		eval "./build/tests/benchmarks" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES"> results/"$i"".$OMP_NUM_THREADS.txt";
 done
 
 
