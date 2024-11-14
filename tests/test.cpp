@@ -13,6 +13,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "catch2/internal/catch_stringref.hpp"
+
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   int n   = 10;
   int** A = new int*[n];
@@ -91,59 +93,19 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
 
   void testCasePartialStarting(Catch::TestCaseInfo const& testInfo,
                                uint64_t partNumber) override {
-    // std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
-    std::cout << "DIMENSION, MEAN" << '\n';
+    std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
+    // std::cout << "DIMENSION, MEAN" << '\n';
   }
 
   void testCasePartialEnded(Catch::TestCaseStats const& testCaseStats,
                             uint64_t partNumber) override {
-    // std::cout << "TestCaseEnded: " << testCaseStats.testInfo->name << '#' <<
-    // partNumber << '\n';
+    std::cout << "TestCaseEnded: " << testCaseStats.testInfo->name << '#'
+              << partNumber << '\n';
   }
 
-  void benchmarkEnded(Catch::BenchmarkStats<> const& stats) override {
-    std::cout << stats.info.name << "," << stats.mean.point.count() << '\n';
+  void benchmarkPreparing(Catch::StringRef str) override {
+    std::cout << "DIMENSION, MEAN" << '\n';
   }
 };
 
 CATCH_REGISTER_REPORTER("csv", PartialCSVReporter)
-
-// TEST_CASE("Array sum", "[array_sum]") {
-//   int n  = 10;
-//   int* v = new int[n];
-//   for (int i = 0; i < n; i++) {
-//     v[i] = i;
-//   }
-//   REQUIRE(array_sum_sequential(v, n) == 45);
-//   REQUIRE(array_sum_parallel(v, n) == 45);
-//
-//   delete[] v;
-//
-//   int test[6] = {10, 100, 1000, 10000, 100000, 1000000};
-//   char* name  = new char[100];
-//   for (int value : test) {
-//     sprintf(name, "array sum seq (%d)", value);
-//     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-//       int n  = value;
-//       int* v = new int[n];
-//       for (int i = 0; i < n; i++) {
-//         v[i] = i;
-//       }
-//       meter.measure([v, n] { return array_sum_sequential(v, n); });
-//       delete[] v;
-//     };
-//   }
-//   for (int value : test) {
-//     sprintf(name, "array sum par (%d)", value);
-//     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-//       int n  = value;
-//       int* v = new int[n];
-//       for (int i = 0; i < n; i++) {
-//         v[i] = i;
-//       }
-//       meter.measure([v, n] { return array_sum_parallel(v, n); });
-//       delete[] v;
-//     };
-//   }
-//   delete[] name;
-// }

@@ -10,6 +10,7 @@
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <catch2/reporters/catch_reporter_streaming_base.hpp>
 #include <cstring>
+#include <iostream>
 
 const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64,
                                  128, 256, 512, 1024, 2048, 4096};
@@ -98,3 +99,28 @@ TEST_CASE("Matrix transposition parallel with collapse",
 
   delete[] name;
 }
+class PartialCSVReporter : public Catch::StreamingReporterBase {
+ public:
+  using StreamingReporterBase::StreamingReporterBase;
+
+  static std::string getDescription() {
+    return "Reporter for benchmarks in CSV format";
+  }
+
+  void testCasePartialStarting(Catch::TestCaseInfo const& testInfo,
+                               uint64_t partNumber) override {
+    // std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
+    std::cout << "DIMENSION, MEAN" << '\n';
+  }
+
+  void testCasePartialEnded(Catch::TestCaseStats const& testCaseStats,
+                            uint64_t partNumber) override {
+    // std::cout << "TestCaseEnded: " << testCaseStats.testInfo->name << '#' <<
+    // partNumber << '\n';
+  }
+
+  void benchmarkEnded(Catch::BenchmarkStats<> const& stats) override {
+    std::cout << stats.info.name << "," << stats.mean.point.count() << '\n';
+  }
+};
+CATCH_REGISTER_REPORTER("csv", PartialCSVReporter)
