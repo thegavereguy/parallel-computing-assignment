@@ -1,4 +1,4 @@
 build/
+results/
 .cache/
 compile_commands.json
-out/Debug
