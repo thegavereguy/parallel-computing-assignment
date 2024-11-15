@@ -1,5 +1,5 @@
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import os
 import glob
 
@@ -23,6 +23,10 @@ for file_path in glob.glob(files_pattern):
     data['Test'] = test_name
     data['Threads'] = thread_count  # Add thread count as a column
 
+    # Calculate asymmetric error bars
+    data['ErrorMinus'] = data['MEAN'] - data['MINT']  # Error on the lower side
+    data['ErrorPlus'] = data['MAXT'] - data['MEAN']  # Error on the upper side
+
     # Append to the main DataFrame
     all_data = pd.concat([all_data, data])
 
@@ -35,29 +39,35 @@ os.makedirs(output_folder, exist_ok=True)
 
 # Generate and save an image plot for each unique test
 for test_name, test_data in all_data.groupby('Test'):
-    fig = px.line(
-        test_data,
-        x='DIMENSION',
-        y='MEAN',
-        error_y='SD',   # Adds error bars based on the standard deviation column
-        color='Threads',  # Different colors for each thread count
-        markers=True,
-        title=f"Execution Times for {test_name} (Comparing Threads)",
-        labels={
-            "DIMENSION": "Matrix Dimension (N)",
-            "MEAN": "Mean Execution Time (ms)",
-            "Threads": "Thread Count",
-            "SD": "Standard Deviation"
-        }
-    )
+    fig = go.Figure()
 
-    fig.update_yaxes(type="log")  # Set y-axis to logarithmic scale
-    fig.update_layout(legend_title="Thread Count")
-    fig.update_traces(error_y=dict(color='rgba(255, 0, 0, 0.6)', thickness=0))  
+    # Plot each thread count as a separate trace
+    for thread_count, thread_data in test_data.groupby('Threads'):
+        fig.add_trace(go.Scatter(
+            x=thread_data['DIMENSION'],
+            y=thread_data['MEAN'],
+            mode='lines+markers',
+            name=f"{thread_count}",
+            error_y=dict(
+                type='data',
+                symmetric=False,
+                array=thread_data['ErrorPlus'],  # Upper error specific to this thread count
+                arrayminus=thread_data['ErrorMinus'],  # Lower error specific to this thread count
+                color='rgba(255, 0, 0, 0.6)',  # Customize error bar color
+                thickness=1.5  # Customize error bar thickness
+            )
+        ))
+
+    fig.update_layout(
+        title=f"Execution Times for {test_name} (Comparing Threads)",
+        xaxis_title="Matrix Dimension (N)",
+        yaxis_title="Mean Execution Time (ms)",
+        yaxis_type="log",  # Set y-axis to logarithmic scale
+        legend_title="Thread Count"
+    )
 
     # Save each plot as an image
     output_path = os.path.join(output_folder, f'{test_name}.png')
     fig.write_image(output_path, format='png', width=1200, height=800)
     fig.show()
     print(f"Graph for {test_name} saved as: {output_path}")
-

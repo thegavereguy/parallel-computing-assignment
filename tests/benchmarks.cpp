@@ -11,6 +11,7 @@
 #include <catch2/reporters/catch_reporter_streaming_base.hpp>
 #include <cstring>
 #include <iostream>
+#include <string>
 
 // const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64, 128, 256,
 // 512, 1024, 2048, 4096};
@@ -115,7 +116,7 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
   void testCasePartialStarting(Catch::TestCaseInfo const& testInfo,
                                uint64_t partNumber) override {
     // std::cout << "TestCase: " << testInfo.name << '#' << partNumber << '\n';
-    std::cout << "DIMENSION,MEAN,SD" << '\n';
+    std::cout << "DIMENSION,MEAN,MINT,MAXT,ITER" << '\n';
   }
 
   void testCasePartialEnded(Catch::TestCaseStats const& testCaseStats,
@@ -126,7 +127,9 @@ class PartialCSVReporter : public Catch::StreamingReporterBase {
 
   void benchmarkEnded(Catch::BenchmarkStats<> const& stats) override {
     std::cout << stats.info.name << "," << stats.mean.point.count() / 1e6 << ","
-              << stats.standardDeviation.point.count() / 1e6 << '\n';
+              << stats.mean.lower_bound.count() / 1e6 << ","
+              << stats.mean.upper_bound.count() / 1e6 << ","
+              << stats.info.iterations << '\n';
   }
 };
 CATCH_REGISTER_REPORTER("csv", PartialCSVReporter)
