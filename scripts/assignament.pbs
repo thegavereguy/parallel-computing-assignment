@@ -51,20 +51,20 @@ export BENCH_SAMPLES=10
 
 export OMP_NUM_THREADS=1
 # Run the benchmarks and save the results
-./scripts/runBenchmarks.sh
+./scripts/run_benchmarks.sh
 
 export OMP_NUM_THREADS=2
 # Run the benchmarks and save the results
-./scripts/runBenchmarks.sh
+./scripts/run_benchmarks.sh
 
 export OMP_NUM_THREADS=4
 # Run the benchmarks and save the results
-./scripts/runBenchmarks.sh
+./scripts/run_benchmarks.sh
 
 export OMP_NUM_THREADS=8
 # Run the benchmarks and save the results
-./scripts/runBenchmarks.sh
+./scripts/run_benchmarks.sh
 
 export OMP_NUM_THREADS=16
 # Run the benchmarks and save the results
-./scripts/runBenchmarks.sh
+./scripts/run_benchmarks.sh
