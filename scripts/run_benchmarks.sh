@@ -12,10 +12,14 @@ if [ -z "$BENCHMARK_SAMPLES" ]; then
 	export BENCHMARK_SAMPLES=10;
 fi
 
-echo "Running $BENCHMARK_SAMPLES samples per benchmark";
+if [-z "$BENCHMARK_CONFIDENCE_INTERVAL"]; then
+	export BENCHMARK_CONFIDENCE_INTERVAL=0.40;
+fi
+
+echo "Running $BENCHMARK_SAMPLES samples per benchmark with $BENCHMARK_CONFIDENCE_INTERVAL confidence interval";
 for i in ${array[@]}; do
 		echo "Running benchmark for [$i] with $OMP_NUM_THREADS threads";
-		eval "./build/tests/benchmarks" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES"> results/"$i"".$OMP_NUM_THREADS.txt";
+		eval "./build/tests/benchmarks" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES" "--benchmark-confidence-interval=$BENCHMARK_CONFIDANCE_INTERVAL" > results/"$i"".$OMP_NUM_THREADS.txt";
 done
 
 
