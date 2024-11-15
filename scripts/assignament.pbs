@@ -7,9 +7,9 @@
 # Queue name
 #PBS -q short_cpuQ
 # Set the maximum wall time
-#PBS -l walltime=0:05:00
+#PBS -l walltime=0:10:00
 # Number of nodes, cpus, mpi processors and amount of memory
-#PBS -l select=1:ncpus=8:mem=1gb
+#PBS -l select=1:ncpus=16:mem=1gb
 
 
 # Modules for C++ compiler and CMake
@@ -22,8 +22,9 @@ g++() {
 # Select the working directory
 cd /home/enrico.dallacia/assignment
 
-# Create directory for the results
+# Create directory for the results and clear it
 mkdir results
+rm -rf results/*
 
 # Print information about the cpu
 lscpu > results/cpu_info.txt
@@ -42,7 +43,27 @@ make -j8
 # Set the number of threads to be used
 export OMP_NUM_THREADS=8
 
-# Execute the tests and save the results
+export BENCHMARK_CONFIDENCE_INTERVAL=0.30
+
+# Set the number of samples for the benchmarks
+export BENCH_SAMPLES=10
+
+export OMP_NUM_THREADS=1
+# Run the benchmarks and save the results
 ./scripts/runBenchmarks.sh
 
+export OMP_NUM_THREADS=2
+# Run the benchmarks and save the results
+./scripts/runBenchmarks.sh
 
+export OMP_NUM_THREADS=4
+# Run the benchmarks and save the results
+./scripts/runBenchmarks.sh
+
+export OMP_NUM_THREADS=8
+# Run the benchmarks and save the results
+./scripts/runBenchmarks.sh
+
+export OMP_NUM_THREADS=16
+# Run the benchmarks and save the results
+./scripts/runBenchmarks.sh
