@@ -39,6 +39,7 @@ make clean
 # Compile the code
 cmake ..
 make -j8
+cd ..
 
 # Set the number of threads to be used
 export OMP_NUM_THREADS=8
