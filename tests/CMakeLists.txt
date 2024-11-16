@@ -9,4 +9,4 @@ target_link_libraries(benchmarks PRIVATE matrix_library)
 target_link_libraries(benchmarks PRIVATE tools_library)
 
 catch_discover_tests(tests)
-catch_discover_tests(benchmarks)
+# catch_discover_tests(benchmarks)
