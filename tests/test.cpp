@@ -1,4 +1,3 @@
-#include <lib/lib.h>
 #include <lib/matrix.h>
 #include <lib/tools.h>
 
@@ -8,12 +7,11 @@
 #include <catch2/catch_get_random_seed.hpp>
 #include <catch2/catch_test_case_info.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/internal/catch_stringref.hpp>
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <catch2/reporters/catch_reporter_streaming_base.hpp>
 #include <cstring>
 #include <iostream>
-
-#include "catch2/internal/catch_stringref.hpp"
 
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   int n   = 10;

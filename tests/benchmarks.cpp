@@ -9,17 +9,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <catch2/reporters/catch_reporter_streaming_base.hpp>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <string>
 
-// const int MAT_TRANS_CASES[12] = {2,   4,   8,   16,   32,   64, 128, 256,
-// 512, 1024, 2048, 4096};
-
-const int MAT_TRANS_CASES[38] = {
-    2,   4,   8,   12,  16,  20,   24,   28,   32,   48,   64,   80,  96,
-    112, 128, 144, 160, 176, 192,  208,  224,  240,  256,  288,  320, 352,
-    384, 416, 448, 480, 512, 1024, 1536, 2048, 2560, 3072, 3584, 4096};
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   char* name = new char[100];
 
@@ -38,7 +32,7 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
           A[i][j] = i * n + j;
         }
       }
-      meter.measure([n, A, B] { transpose_sequential(n, A, B); });
+      meter.measure([n, A, B] { return transpose_sequential(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
     };
@@ -53,8 +47,6 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
     // for (int i = 2; i < 2048; i += 255) {
-    sprintf(name, "mat trans par (%d)", i);
-
     sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
       int n   = i;
@@ -67,7 +59,7 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
           A[i][j] = i * n + j;
         }
       }
-      meter.measure([n, A, B] { transpose_parallel(n, A, B); });
+      meter.measure([n, A, B] { return transpose_parallel(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
     };
@@ -83,7 +75,6 @@ TEST_CASE("Matrix transposition parallel with collapse",
   // parallel transposition
   for (int i : MAT_TRANS_CASES) {
     // for (int i = 2; i < 2048; i += 255) {
-    //  sprintf(name, "mat trans par col(%d)", i);
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
@@ -97,7 +88,7 @@ TEST_CASE("Matrix transposition parallel with collapse",
           A[i][j] = i * n + j;
         }
       }
-      meter.measure([n, A, B] { transpose_parallel_collapse(n, A, B); });
+      meter.measure([n, A, B] { return transpose_parallel_collapse(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
     };

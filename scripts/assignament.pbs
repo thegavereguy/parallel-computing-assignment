@@ -25,6 +25,8 @@ cd /home/enrico.dallacia/assignment
 # Create directory for the results and clear it
 mkdir results
 rm -rf results/*
+mkdir retults/benchmarks
+mkdir retults/memory
 
 # Print information about the cpu
 lscpu > results/cpu_info.txt

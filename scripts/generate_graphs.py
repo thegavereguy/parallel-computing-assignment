@@ -4,7 +4,7 @@ import os
 import glob
 
 # Path to the folder containing results
-results_folder = "results"
+results_folder = "results/benchmarks"
 files_pattern = os.path.join(
     results_folder, "*.csv"
 )  # Matches all .csv files in the folder
