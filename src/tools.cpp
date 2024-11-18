@@ -17,11 +17,16 @@ void deallocate(double **M, int n) {
 void deallocate(int *M, int n) { delete[] M; }
 
 void random_allocation(int **M, int n) {
-  int **A = new int *[n];
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n]();
+    M[i] = new int[n]();
     for (int j = 0; j < n; j++) {
-      A[i][j] = rand() % n;
+      M[i][j] = rand() % n;
     }
+  }
+}
+
+void empty_allocation(int **M, int n) {
+  for (int i = 0; i < n; i++) {
+    M[i] = new int[n]();
   }
 }
