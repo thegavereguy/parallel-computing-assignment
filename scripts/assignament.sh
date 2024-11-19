@@ -2,7 +2,7 @@
 mkdir results
 rm -rf results/*
 mkdir results/benchmarks
-mkdir results/memory
+mkdir results/cache
 
 # Print information about the cpu
 lscpu > results/cpu_info.txt
