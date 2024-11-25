@@ -100,21 +100,20 @@ for test_name in all_benchmarks["Test"].unique():
             )
         )
 
-    # Plot cache metrics as bars
-    # Plot cache metrics as additional lines with secondary y-axis
     if not cache_data.empty:
-        for metric in ["CACHE-MISSES"]:
-            fig.add_trace(
-                go.Scatter(
-                    x=cache_data["DIMENSION"],
-                    y=cache_data[metric],
-                    mode="lines+markers",
-                    name=f"{metric} (Cache Metric)",
-                    line=dict(dash="dot"),  # Dashed line for differentiation
-                    marker=dict(opacity=0.6),  # Semi-transparent markers
-                    yaxis="y2",  # Use secondary y-axis for these lines
+        for thread_count, thread_data in cache_data.groupby("Threads"):
+            for metric in ["CACHEREF", "CACHEMISS"]:
+                fig.add_trace(
+                    go.Scatter(
+                        x=thread_data["DIMENSION"],
+                        y=thread_data[metric],
+                        mode="lines+markers",
+                        name=f"{metric} (Threads: {thread_count})",
+                        line=dict(dash="dot"),  # Dashed line for differentiation
+                        marker=dict(opacity=0.6),  # Semi-transparent markers
+                        yaxis="y2",  # Use secondary y-axis for these lines
+                    )
                 )
-            )
 
     # Update layout to include secondary y-axis
 

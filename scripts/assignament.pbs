@@ -20,7 +20,7 @@ g++() {
 }
 
 # Select the working directory
-cd /home/enrico.dallacia/assignment
+cd $HOME/assignment
 
 # Create directory for the results and clear it
 mkdir results
