@@ -27,6 +27,8 @@ export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 # Set the number of samples for the benchmarks
 export BENCH_SAMPLES=10
 
+export RUN_CACHE_BENCHMARKS=0
+
 export OMP_NUM_THREADS=1
 # Run the benchmarks and save the results
 ./scripts/run_benchmarks.sh
