@@ -33,7 +33,7 @@ void transpose_parallel_collapse(int n, int **A, int **B) {
 void transpose_parallel_unroll(int n, int **A, int **B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n - 4; j += 4) {
+    for (int j = 0; j < n; j += 4) {
       B[i][j]     = A[j][i];
       B[i][j + 1] = A[j + 1][i];
       B[i][j + 2] = A[j + 2][i];
