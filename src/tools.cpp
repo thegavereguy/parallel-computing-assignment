@@ -32,6 +32,17 @@ void empty_allocation(int **M, int n) {
   }
 }
 
+bool check_transpose(int **A, int **B, int n) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (A[i][j] != B[j][i]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 Results::Results() {
   instructions = std::vector<double>();
   cycles       = std::vector<double>();

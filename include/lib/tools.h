@@ -4,6 +4,7 @@ void deallocate(double **, int);
 void deallocate(int *, int);
 void random_allocation(int **, int);
 void empty_allocation(int **, int);
+bool check_transpose(int **, int **, int);
 
 class Results {
  private:

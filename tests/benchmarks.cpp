@@ -96,6 +96,61 @@ TEST_CASE("Matrix transposition parallel with collapse",
 
   delete[] name;
 }
+
+TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n   = i;
+      int** A = new int*[n];
+      int** B = new int*[n];
+      for (int i = 0; i < n; i++) {
+        A[i] = new int[n]();
+        B[i] = new int[n]();
+        for (int j = 0; j < n; j++) {
+          A[i][j] = i * n + j;
+        }
+      }
+      meter.measure([n, A, B] { return transpose_vec(n, A, B); });
+      deallocate(A, n);
+      deallocate(B, n);
+    };
+  }
+
+  delete[] name;
+}
+TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n   = i;
+      int** A = new int*[n];
+      int** B = new int*[n];
+      for (int i = 0; i < n; i++) {
+        A[i] = new int[n]();
+        B[i] = new int[n]();
+        for (int j = 0; j < n; j++) {
+          A[i][j] = i * n + j;
+        }
+      }
+      meter.measure([n, A, B] { return transpose_parallel_unroll(n, A, B); });
+      deallocate(A, n);
+      deallocate(B, n);
+    };
+  }
+
+  delete[] name;
+}
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
   using StreamingReporterBase::StreamingReporterBase;

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-array=("mat_trans_par" "mat_trans_par_col" "mat_trans_seq");
-array2=(1 2 0);
+array=("mat_trans_par" "mat_trans_par_col" "mat_trans_seq" "mat_trans_par_unr" "mat_trans_vec");
+array2=(1 2 0 3 4);
 
 # check if the OMP_NUM_THREADS is set
 # if not set, set it to 1

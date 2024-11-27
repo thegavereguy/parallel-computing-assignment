@@ -14,7 +14,7 @@
 #include <iostream>
 
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
-  int n   = 10;
+  int n   = 16;
   int** A = new int*[n];
   int** B = new int*[n];
 
@@ -36,7 +36,7 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
 }
 
 TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
-  int n   = 10;
+  int n   = 16;
   int** A = new int*[n];
   int** B = new int*[n];
 
@@ -59,7 +59,7 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
 
 TEST_CASE("Matrix transposition parallel with collapse",
           "[mat_trans_par_col]") {
-  int n   = 10;
+  int n   = 16;
   int** A = new int*[n];
   int** B = new int*[n];
 
@@ -80,6 +80,49 @@ TEST_CASE("Matrix transposition parallel with collapse",
   deallocate(B, n);
 }
 
+TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
+  int n   = 16;
+  int** A = new int*[n];
+  int** B = new int*[n];
+
+  for (int i = 0; i < n; i++) {
+    A[i] = new int[n];
+    B[i] = new int[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_parallel_unroll(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i][j] == B[j][i]);
+    }
+  }
+  deallocate(A, n);
+  deallocate(B, n);
+}
+
+TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
+  int n   = 16;
+  int** A = new int*[n];
+  int** B = new int*[n];
+
+  for (int i = 0; i < n; i++) {
+    A[i] = new int[n];
+    B[i] = new int[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_vec(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i][j] == B[j][i]);
+    }
+  }
+  deallocate(A, n);
+  deallocate(B, n);
+}
 // define a custom reporter
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
