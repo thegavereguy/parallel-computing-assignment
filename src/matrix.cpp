@@ -1,3 +1,4 @@
+#include <immintrin.h>
 #include <lib/matrix.h>
 #include <omp.h>
 
@@ -70,6 +71,30 @@ void transpose_parallel_row(int n, int **A, int **B) {
   for (int i = 0; i < n; i++) {
     for (int k = 0; k < n; k++) {
       B[i][k] = A[k][i];
+    }
+  }
+}
+
+void transpose_4x4_sse(float *src1, float *src2, float *src3, float *src4,
+                       float *dst1, float *dst2, float *dst3, float *dst4) {
+  __m128 row1 = _mm_loadu_ps(src1);
+  __m128 row2 = _mm_loadu_ps(src2);
+  __m128 row3 = _mm_loadu_ps(src3);
+  __m128 row4 = _mm_loadu_ps(src4);
+  _MM_TRANSPOSE4_PS(row1, row2, row3, row4);
+
+  _mm_storeu_ps(dst1, row1);
+  _mm_storeu_ps(dst2, row2);
+  _mm_storeu_ps(dst3, row3);
+  _mm_storeu_ps(dst4, row4);
+}
+
+void transpose_block_sse(int n, float **A, float **B) {
+  // #pragma omp parallel for
+  for (int i = 0; i < n; i += 4) {
+    for (int j = 0; j < n; j += 4) {
+      transpose_4x4_sse(&A[i][j], &A[i + 1][j], &A[i + 2][j], &A[i + 3][j],
+                        &B[j][i], &B[j + 1][i], &B[j + 2][i], &B[j + 3][i]);
     }
   }
 }

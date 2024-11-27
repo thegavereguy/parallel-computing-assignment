@@ -123,6 +123,29 @@ TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
   deallocate(A, n);
   deallocate(B, n);
 }
+
+TEST_CASE("Matrix transposition with block sse", "[mat_trans_blk_sse]") {
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
+
+  for (int i = 0; i < n; i++) {
+    A[i] = new float[n];
+    B[i] = new float[n];
+    for (int j = 0; j < n; j++) {
+      A[i][j] = i * n + j;
+    }
+  }
+  transpose_block_sse(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i][j] == B[j][i]);
+    }
+  }
+  deallocate(A, n);
+  deallocate(B, n);
+}
+
 // define a custom reporter
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
