@@ -1,10 +1,12 @@
 add_executable(app app.cpp)
-add_executable(cache cache.cpp)
+add_executable(cache_bench cache_bench.cpp)
+add_executable(run run.cpp)
 
 target_link_libraries(app PRIVATE matrix_library)
 target_link_libraries(app PRIVATE tools_library)
 target_link_libraries(app PRIVATE perf-cpp)
-target_link_libraries(cache PRIVATE matrix_library)
-target_link_libraries(cache PRIVATE tools_library)
-target_link_libraries(cache PRIVATE perf-cpp)
-
+target_link_libraries(cache_bench PRIVATE matrix_library)
+target_link_libraries(cache_bench PRIVATE tools_library)
+target_link_libraries(cache_bench PRIVATE perf-cpp)
+target_link_libraries(run PRIVATE matrix_library)
+target_link_libraries(run PRIVATE tools_library)

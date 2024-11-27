@@ -8,6 +8,15 @@
 #define INTERVAL_CONFIDENCE 0
 
 int main(int argc, char **argv) {
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " <samples> <function>" << std::endl;
+    std::cerr << "  <samples>  : number of samples to take" << std::endl;
+    std::cerr << "  <function> : 0 for sequential, 1 for parallel, 2 for "
+                 "parallel collapse"
+              << std::endl;
+    return 1;
+  }
+
   int samples = std::stoi(argv[1]);
   int fun     = std::stoi(argv[2]);
 

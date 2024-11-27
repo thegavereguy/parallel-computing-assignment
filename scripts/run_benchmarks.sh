@@ -17,14 +17,18 @@ if [ -z "$BENCHMARK_CONFIDENCE_INTERVAL" ]; then
 	export BENCHMARK_CONFIDENCE_INTERVAL=0.40;
 fi
 
-if [ -z "RUN_CACHE_BENCHMARK" ]; then
-	export RUN_CACHE_BENCHMARK=0;
+if [ -z "RUN_CACHE_BENCHMARKS" ]; then
+	export RUN_CACHE_BENCHMARKS=0;
+	run_cache_benchmarks=0;
+else
+	run_cache_benchmarks=$RUN_CACHE_BENCHMARKS;
 fi
 
-if [ -z "RUN_CACHE_BENCHMARKS" ]; then
+
+if [ ${run_cache_benchmarks} == 1 ]; then
 	for i in ${array2[@]}; do
 		echo "Running cache benchmark for [${array[$i]}] with $OMP_NUM_THREADS threads";
-		eval "./build/apps/cache" "$BENCHMARK_SAMPLES" "$i" > results/cache/"${array[$i]}"".$OMP_NUM_THREADS.csv";
+		eval "./build/apps/cache_bench" "$BENCHMARK_SAMPLES" "$i" > results/cache/"${array[$i]}"".$OMP_NUM_THREADS.csv";
 	done
 else
 	echo "Skipping cache benchmarks";

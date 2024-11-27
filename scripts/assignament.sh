@@ -12,7 +12,7 @@ mkdir build
 cd build
 
 # Remove the previous build
-make clean
+# make clean
 
 # Compile the code
 cmake ..
@@ -27,7 +27,7 @@ export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 # Set the number of samples for the benchmarks
 export BENCH_SAMPLES=10
 
-export RUN_CACHE_BENCHMARKS=0
+export RUN_CACHE_BENCHMARKS=1
 
 export OMP_NUM_THREADS=1
 # Run the benchmarks and save the results
