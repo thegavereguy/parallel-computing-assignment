@@ -19,32 +19,17 @@ cmake ..
 make -j8
 cd ..
 
-# Set the number of threads to be used
-export OMP_NUM_THREADS=8
-
 export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 
 # Set the number of samples for the benchmarks
 export BENCH_SAMPLES=10
 
-export RUN_CACHE_BENCHMARKS=2
+export RUN_CACHE_BENCHMARKS=0
 
-export OMP_NUM_THREADS=1
-# Run the benchmarks and save the results
-./scripts/run_benchmarks.sh
+threads=( 1 2 4 8 )
+for i in ${threads[@]}; do
+	export OMP_NUM_THREADS=$i
+	# Run the benchmarks and save the results
+	./scripts/run_benchmarks.sh
+done
 
-export OMP_NUM_THREADS=2
-# Run the benchmarks and save the results
-./scripts/run_benchmarks.sh
-
-export OMP_NUM_THREADS=4
-# Run the benchmarks and save the results
-./scripts/run_benchmarks.sh
-
-export OMP_NUM_THREADS=8
-# Run the benchmarks and save the results
-./scripts/run_benchmarks.sh
-
-#export OMP_NUM_THREADS=16
-# Run the benchmarks and save the results
-#./scripts/run_benchmarks.sh
