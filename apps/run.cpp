@@ -19,8 +19,8 @@ int main(int argc, char **argv) {
   for (int n : MAT_TRANS_CASES) {
     Results res;
     for (int i = 0; i < samples; i++) {
-      int **A = new int *[n];
-      int **B = new int *[n];
+      float **A = new float *[n];
+      float **B = new float *[n];
       random_allocation(A, n);
       empty_allocation(B, n);
 
@@ -34,6 +34,11 @@ int main(int argc, char **argv) {
         case 2:
           transpose_parallel_collapse(n, A, B);
           break;
+        case 3:
+          transpose_parallel_unroll(n, A, B);
+          break;
+        case 4:
+          transpose_parallel_sse(n, A, B);
       }
 
       /// Print the result to the console
