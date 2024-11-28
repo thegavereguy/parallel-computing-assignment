@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   // }
   // deallocate(A, n);
   // deallocate(B, n);
-  int n     = 8;
+  int n     = 4096;
   float** A = new float*[n];
   float** B = new float*[n];
 
@@ -45,11 +45,16 @@ int main(int argc, char** argv) {
       A[i][j] = i * n + j;
     }
   }
-  transpose_block_sse(n, A, B);
+  transpose_parallel_sse(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      // REQUIRE(A[i][j] == B[j][i]);
-      printf("A[%d][%d] = %f, B[%d][%d] = %f\n", i, j, A[i][j], i, j, B[i][j]);
+      if (A[i][j] != B[j][i]) {
+        std::cout << "Error: A[" << i << "][" << j << "] = " << A[i][j]
+                  << ", B[" << i << "][" << j << "] = " << B[i][j] << std::endl;
+        return -1;
+      };
+      // printf("A[%d][%d] = %f, B[%d][%d] = %f\n", i, j, A[i][j], i, j,
+      // B[i][j]);
     }
   }
   deallocate(A, n);

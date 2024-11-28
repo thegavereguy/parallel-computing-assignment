@@ -136,7 +136,7 @@ TEST_CASE("Matrix transposition with block sse", "[mat_trans_blk_sse]") {
       A[i][j] = i * n + j;
     }
   }
-  transpose_block_sse(n, A, B);
+  transpose_parallel_sse(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       REQUIRE(A[i][j] == B[j][i]);
