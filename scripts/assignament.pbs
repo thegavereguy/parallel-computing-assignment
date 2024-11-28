@@ -21,8 +21,12 @@ g++() {
     g++-9.1.0 "$@"
 }
 
+if [ -z $PROJECT_DIR ]; then
+		PROJECT_DIR="parallel-computing-assignment"
+fi
+
 # Select the working directory
-cd $HOME/assignment
+cd $HOME/$PROJECT_DIR
 
 # Create directory for the results and clear it
 mkdir results
