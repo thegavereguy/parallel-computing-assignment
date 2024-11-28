@@ -46,7 +46,23 @@ make
 ### Manual execution
 
 Before attempting to run the project manually, please complete the [build steps](#building).
+**If executing manually on the cluster, make sure to start an interactive session before compiling and running the code**
 
+'''bash
+qsub -I -q short_cpuQ
+'''
 
-### Automatic execution 
+### Automatic execution on PBS cluster
+
+To start the automated execution of the whole project just submit the PBS script to the system:
+
+**If the directory of the repository is not in the home folder and|or was renamed, make sure to export the PROJECT_DIR environment variable with the directory path relative to the home directory.**
+'''bash
+# if the repo dir is in "/home/name/assignments/enricodallacia_assignment"
+export PROJECT_DIR=assignments/enricodallacia_assignment 
+'''
+
+'''bash
+qsub scripts/assignment.pbs
+'''
 
