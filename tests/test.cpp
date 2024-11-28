@@ -14,13 +14,13 @@
 #include <iostream>
 
 TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
-  int n   = 16;
-  int** A = new int*[n];
-  int** B = new int*[n];
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
 
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n];
-    B[i] = new int[n];
+    A[i] = new float[n];
+    B[i] = new float[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }
@@ -36,13 +36,13 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
 }
 
 TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
-  int n   = 16;
-  int** A = new int*[n];
-  int** B = new int*[n];
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
 
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n];
-    B[i] = new int[n];
+    A[i] = new float[n];
+    B[i] = new float[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }
@@ -59,13 +59,13 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
 
 TEST_CASE("Matrix transposition parallel with collapse",
           "[mat_trans_par_col]") {
-  int n   = 16;
-  int** A = new int*[n];
-  int** B = new int*[n];
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
 
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n];
-    B[i] = new int[n];
+    A[i] = new float[n];
+    B[i] = new float[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }
@@ -81,13 +81,13 @@ TEST_CASE("Matrix transposition parallel with collapse",
 }
 
 TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
-  int n   = 16;
-  int** A = new int*[n];
-  int** B = new int*[n];
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
 
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n];
-    B[i] = new int[n];
+    A[i] = new float[n];
+    B[i] = new float[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }
@@ -103,13 +103,13 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
 }
 
 TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
-  int n   = 16;
-  int** A = new int*[n];
-  int** B = new int*[n];
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
 
   for (int i = 0; i < n; i++) {
-    A[i] = new int[n];
-    B[i] = new int[n];
+    A[i] = new float[n];
+    B[i] = new float[n];
     for (int j = 0; j < n; j++) {
       A[i][j] = i * n + j;
     }

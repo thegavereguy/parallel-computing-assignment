@@ -22,12 +22,12 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
     // for (int i = 2; i < 2048; i += 255) {
     sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n   = i;
-      int** A = new int*[n];
-      int** B = new int*[n];
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
       for (int i = 0; i < n; i++) {
-        A[i] = new int[n]();
-        B[i] = new int[n]();
+        A[i] = new float[n]();
+        B[i] = new float[n]();
         for (int j = 0; j < n; j++) {
           A[i][j] = i * n + j;
         }
@@ -49,12 +49,12 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
     // for (int i = 2; i < 2048; i += 255) {
     sprintf(name, "%d", i);
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n   = i;
-      int** A = new int*[n];
-      int** B = new int*[n];
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
       for (int i = 0; i < n; i++) {
-        A[i] = new int[n]();
-        B[i] = new int[n]();
+        A[i] = new float[n]();
+        B[i] = new float[n]();
         for (int j = 0; j < n; j++) {
           A[i][j] = i * n + j;
         }
@@ -78,12 +78,12 @@ TEST_CASE("Matrix transposition parallel with collapse",
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n   = i;
-      int** A = new int*[n];
-      int** B = new int*[n];
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
       for (int i = 0; i < n; i++) {
-        A[i] = new int[n]();
-        B[i] = new int[n]();
+        A[i] = new float[n]();
+        B[i] = new float[n]();
         for (int j = 0; j < n; j++) {
           A[i][j] = i * n + j;
         }
@@ -106,12 +106,12 @@ TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n   = i;
-      int** A = new int*[n];
-      int** B = new int*[n];
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
       for (int i = 0; i < n; i++) {
-        A[i] = new int[n]();
-        B[i] = new int[n]();
+        A[i] = new float[n]();
+        B[i] = new float[n]();
         for (int j = 0; j < n; j++) {
           A[i][j] = i * n + j;
         }
@@ -133,12 +133,12 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n   = i;
-      int** A = new int*[n];
-      int** B = new int*[n];
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
       for (int i = 0; i < n; i++) {
-        A[i] = new int[n]();
-        B[i] = new int[n]();
+        A[i] = new float[n]();
+        B[i] = new float[n]();
         for (int j = 0; j < n; j++) {
           A[i][j] = i * n + j;
         }

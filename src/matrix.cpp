@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-void transpose_sequential(int n, int **A, int **B) {
+void transpose_sequential(int n, float **A, float **B) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       B[i][j] = A[j][i];
@@ -12,7 +12,7 @@ void transpose_sequential(int n, int **A, int **B) {
   }
 }
 
-void transpose_parallel(int n, int **A, int **B) {
+void transpose_parallel(int n, float **A, float **B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -21,7 +21,7 @@ void transpose_parallel(int n, int **A, int **B) {
   }
 }
 
-void transpose_parallel_collapse(int n, int **A, int **B) {
+void transpose_parallel_collapse(int n, float **A, float **B) {
 #pragma omp parallel for collapse(2)
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -31,7 +31,7 @@ void transpose_parallel_collapse(int n, int **A, int **B) {
 }
 
 // matrix transposition with loop unroll
-void transpose_parallel_unroll(int n, int **A, int **B) {
+void transpose_parallel_unroll(int n, float **A, float **B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j += 4) {
@@ -44,7 +44,7 @@ void transpose_parallel_unroll(int n, int **A, int **B) {
 }
 
 // matrix transposition with vectorization
-void transpose_vec(int n, int **A, int **B) {
+void transpose_vec(int n, float **A, float **B) {
 #pragma omp simd
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -53,7 +53,7 @@ void transpose_vec(int n, int **A, int **B) {
   }
 }
 
-void transpose_parallel_block(int n, int **A, int **B) {
+void transpose_parallel_block(int n, float **A, float **B) {
   int block_size = 4;
   int i, j, ii, jj;
   for (i = 0; i < n; i += block_size) {
@@ -67,7 +67,7 @@ void transpose_parallel_block(int n, int **A, int **B) {
   }
 }
 
-void transpose_parallel_row(int n, int **A, int **B) {
+void transpose_parallel_row(int n, float **A, float **B) {
   for (int i = 0; i < n; i++) {
     for (int k = 0; k < n; k++) {
       B[i][k] = A[k][i];
