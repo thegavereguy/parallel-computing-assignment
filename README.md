@@ -6,7 +6,13 @@
   - [Building](#building)
   - [Execution](#execution)
     - [Manual execution](#manual-execution)
+      - [Running the whole project](#running-the-whole-project)
     - [Automatic execution on PBS cluster](#automatic-execution-on-pbs-cluster)
+  - [Benchmarks](#benchmarks)
+    - [Execution time](#execution-time)
+    - [Memory and cache](#memory-and-cache)
+      - [Embedded](#embedded)
+      - [External](#external)
 <!--toc:end-->
 
 ## Getting started
@@ -68,6 +74,8 @@ The following variables in the script can be modified according to the testers n
     - `0`: The benchmark is skipped entirely.
     - `1`: The embedded cache benchmark is run (more precise). Check [this](#embedded) for more info.
     - `2`: The external cache benchmark is run (higher compatibility). Check [this](#external) for more info.
+
+The number of threads used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1,2,4,8 and 16 threads.  
 
 ### Automatic execution on PBS cluster
 
