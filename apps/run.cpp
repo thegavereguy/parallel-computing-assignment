@@ -39,6 +39,11 @@ int main(int argc, char **argv) {
           break;
         case 4:
           transpose_parallel_sse(n, A, B);
+          break;
+        default:
+          printf("Invalid function\n");
+          return -1;
+          break;
       }
 
       /// Print the result to the console
