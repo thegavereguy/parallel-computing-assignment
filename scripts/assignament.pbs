@@ -44,16 +44,13 @@ cmake ..
 make -j8
 cd ..
 
-# Set the number of threads to be used
-export OMP_NUM_THREADS=8
-
 export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 
 # Set the number of samples for the benchmarks
 export BENCH_SAMPLES=10
 
 # Skip the cache benchmarks as they do not work on the cluster
-export RUN_CACHE_BENCHMARKS=0
+export RUN_CACHE_BENCHMARKS=2
 
 export OMP_NUM_THREADS=1
 # Run the benchmarks and save the results
