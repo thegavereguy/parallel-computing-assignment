@@ -49,7 +49,7 @@ make
 
 ## Execution
 
-### Manual execution
+### Manual execution on local machine
 
 Before attempting to run the project manually, please complete the [build steps](#building).
 **If executing manually on the cluster, make sure to start an interactive session before compiling and running the code**
@@ -79,7 +79,7 @@ The following variables in the script can be modified according to the testers n
     - `1`: -O1 optimization
     - `2`: -O2 optimization
 - `CLEAR_RESULTS`:
-    - `0`: The results from the last runs are kept or overwritten if the optimization level or thread count is unchaged.
+    - `0`: The results from the last runs are kept or overwritten if the optimization level or thread count is unchanged.
     - `1`: All the previous results are cleared.
 
 The *number of threads* used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1, 2, 4, 8 and 16 threads.  
