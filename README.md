@@ -75,11 +75,14 @@ The following variables in the script can be modified according to the testers n
     - `1`: The embedded cache benchmark is run (more precise). Check [this](#embedded) for more info.
     - `2`: The external cache benchmark is run (higher compatibility). Check [this](#external) for more info.
 - `BUILD_OPTIMIZED`: Sets the type of optimization to apply during the compilation stage. Check [this](#optimization) for more info. It can be one of the following options:
-    - '0': No optimization
-    - '1': -O1 optimization
-    - '2': -O2 optimization
+    - `0`: No optimization
+    - `1`: -O1 optimization
+    - `2`: -O2 optimization
+- `CLEAR_RESULTS`:
+    - `0`: The results from the last runs are kept or overwritten if the optimization level or thread count is unchaged.
+    - `1`: All the previous results are cleared.
 
-The number of threads used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1, 2, 4, 8 and 16 threads.  
+The *number of threads* used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1, 2, 4, 8 and 16 threads.  
 
 ### Automatic execution on PBS cluster
 
@@ -91,12 +94,29 @@ To start the automated execution of the whole project just submit the PBS script
 export PROJECT_DIR=assignments/enricodallacia_assignment 
 ```
 
+Similarly to the execution using the bash script, a number of option can be set manually by exporting the respective environment variables.
+Here's the default variable that can be overwritten before submitting the file to the queue:
+
+```bash
+export BENCHMARK_CONFIDENCE_INTERVAL=0.30
+export BENCH_SAMPLES=10
+export RUN_CACHE_BENCHMARKS=1
+export BUILD_OPTIMIZED=2
+export CLEAR_RESULTS=0
+```
+
+After that the execution can be started by submitting the PBS format file to the system:
+
 ```bash
 qsub scripts/assignment.pbs
 ```
 
 ## Benchmarks
-talk about benchmarks
+The benchmarks are the main part of the project. They are performed automatically according to the options set in the step preceding the execution.
+All results are store in the `results` folder, subdivided by typology.
+The conditions in which each benchmark was executed can be determined by the filename. It follows this format: `benchmark_name.optimization_type.thread_count.csv`.
+This is valid for all tests, except for cache tests when run on the PBS cluster, which are discussed later. 
+
 ### Execution time
 again
 ### Memory and cache
