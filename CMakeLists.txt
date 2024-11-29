@@ -4,6 +4,9 @@ project(assignment VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
+option(BUILD_OPTIMIZED_O1 "Build with -O1" OFF)
+option(BUILD_OPTIMIZED_O2 "Build with -O2" OFF)
+
 Include(FetchContent)
 
 FetchContent_Declare(
@@ -30,3 +33,4 @@ include_directories(${perf-cpp-external_SOURCE_DIR}/include)
 add_subdirectory(src)
 add_subdirectory(apps)
 add_subdirectory(tests)
+

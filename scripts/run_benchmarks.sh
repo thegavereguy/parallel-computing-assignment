@@ -17,7 +17,7 @@ if [ -z "$BENCHMARK_CONFIDENCE_INTERVAL" ]; then
 	export BENCHMARK_CONFIDENCE_INTERVAL=0.40;
 fi
 
-if [ -z "RUN_CACHE_BENCHMARKS" ]; then
+if [ -z "$RUN_CACHE_BENCHMARKS" ]; then
 	export RUN_CACHE_BENCHMARKS=0;
 	run_cache_benchmarks=0;
 else
