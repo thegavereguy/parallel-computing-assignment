@@ -58,6 +58,8 @@ for file_path in glob.glob(cache_pattern):
     data["Test"] = test_name
     data["Threads"] = thread_count  # Add thread count as a column
 
+    data["CacheMissRatio"] = data["CACHEMISS"] / data["CACHEREF"]
+
     # Append to the main DataFrame
     all_cache = pd.concat([all_cache, data])
 
@@ -100,20 +102,24 @@ for test_name in all_benchmarks["Test"].unique():
             )
         )
 
+    # Grafico del rapporto cache misses/references
     if not cache_data.empty:
-        for thread_count, thread_data in cache_data.groupby("Threads"):
-            for metric in ["CACHE-MISSES"]:
-                fig.add_trace(
-                    go.Scatter(
-                        x=thread_data["DIMENSION"],
-                        y=thread_data[metric],
-                        mode="lines+markers",
-                        name=f"Threads: {thread_count} (cache misses)",
-                        line=dict(dash="dot"),  # Dashed line for differentiation
-                        marker=dict(opacity=0.6),  # Semi-transparent markers
-                        yaxis="y2",  # Use secondary y-axis for these lines
-                    )
+        for (test_name, thread_count), thread_data in cache_data.groupby(
+            ["Test", "Threads"]
+        ):
+            print(f"Cache data for {test_name} with {thread_count} threads:")
+            print(thread_data)
+            fig.add_trace(
+                go.Scatter(
+                    x=thread_data["DIMENSION"],
+                    y=thread_data["CacheMissRatio"],
+                    mode="lines+markers",
+                    name=f"{test_name} Cache Miss Ratio (Threads: {thread_count})",
+                    yaxis="y2",
+                    line=dict(dash="dot"),  # Linea tratteggiata
+                    hovertemplate="DIMENSION: %{x}<br>Cache Miss Ratio: %{y:.2%}<br>Threads: %{name}<extra></extra>",
                 )
+            )
 
     # Update layout to include secondary y-axis
 
@@ -130,10 +136,10 @@ for test_name in all_benchmarks["Test"].unique():
             type="log",  # Primary y-axis is logarithmic
         ),
         yaxis2=dict(
-            title="Cache Metrics (INST, CYCLES, CACHE-MISSES)",
+            title="Cache Metrics ()",
             overlaying="y",  # Overlay on the same graph
             side="right",  # Place on the right
-            type="log",  # Linear scale for the secondary axis
+            type="linear",  # Linear scale for the secondary axis
         ),
         legend_title="Metric/Thread Count",
     )

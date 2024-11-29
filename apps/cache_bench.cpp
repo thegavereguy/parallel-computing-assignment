@@ -12,8 +12,9 @@ int main(int argc, char **argv) {
     std::cerr << "Usage: " << argv[0] << " <samples> <function>" << std::endl;
     std::cerr << "  <samples>  : number of samples to take" << std::endl;
     std::cerr << "  <function> : 0 for sequential, 1 for parallel, 2 for "
-                 "parallel collapse"
+                 "parallel collapse, 3 for parallel unroll, 4 for parallel sse"
               << std::endl;
+
     return 1;
   }
 
@@ -22,9 +23,10 @@ int main(int argc, char **argv) {
 
   auto counters      = perf::CounterDefinition();
   auto event_counter = perf::EventCounter{counters};
-  event_counter.add({"instructions", "cycles", "cache-misses"});
+  event_counter.add(
+      {"instructions", "cycles", "cache-references", "cache-misses"});
 
-  std::cout << "DIMENSION,INST,CYCLES,CACHE-MISSES" << std::endl;
+  std::cout << "DIMENSION,INST,CYCLES,CACHEREF,CACHEMISS" << std::endl;
   for (int n : MAT_TRANS_CASES) {
     Results res;
     for (int i = 0; i < samples; i++) {
@@ -66,6 +68,8 @@ int main(int argc, char **argv) {
           res.push_back_cycles(value);
         } else if (event_name == "cache-misses") {
           res.push_back_cache_misses(value);
+        } else if (event_name == "cache-references") {
+          res.push_back_cache_refs(value);
         }
       }
       // std::cout << std::endl;
@@ -79,6 +83,7 @@ int main(int argc, char **argv) {
     // << std::endl;
     std::cout << n << "," << res.mean_instructions(INTERVAL_CONFIDENCE) << ","
               << res.mean_cycles(INTERVAL_CONFIDENCE) << ","
+              << res.mean_cache_refs(INTERVAL_CONFIDENCE) << ","
               << res.mean_cache_misses(INTERVAL_CONFIDENCE) << std::endl;
   }
 

@@ -24,11 +24,17 @@ else
 	run_cache_benchmarks=$RUN_CACHE_BENCHMARKS;
 fi
 
+if [ -z "$BUILD_OPTIMIZED" ]; then
+	echo "BUILD_OPTIMIZED is not set. exiting";
+	exit -2;
+else
+	build_optimized=$BUILD_OPTIMIZED;
+fi
 
 if [ ${run_cache_benchmarks} == 1 ]; then
 	for i in ${array2[@]}; do
 		echo "Running embedded cache benchmark for [${array[$i]}] with $OMP_NUM_THREADS threads";
-		eval "./build/apps/cache_bench" "$BENCHMARK_SAMPLES" "$i" > results/cache/"${array[$i]}"".$OMP_NUM_THREADS.csv";
+		eval "./build/apps/cache_bench" "$BENCHMARK_SAMPLES" "$i" > results/cache/"${array[$i]}"".$BUILD_OPTIMIZED.$OMP_NUM_THREADS.csv";
 	done
 elif [ ${run_cache_benchmarks} == 2 ]; then
 	for i in ${array2[@]}; do

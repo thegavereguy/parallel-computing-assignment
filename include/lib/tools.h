@@ -15,6 +15,7 @@ class Results {
   std::vector<double> instructions;
   std::vector<double> cycles;
   std::vector<double> cache_misses;
+  std::vector<double> cache_refs;
   // calculate means and standard deviations
   double mean(std::vector<double> &);
   double std_dev(std::vector<double> &);
@@ -26,10 +27,12 @@ class Results {
   void push_back_instructions(double);
   void push_back_cycles(double);
   void push_back_cache_misses(double);
+  void push_back_cache_refs(double);
 
   double mean_instructions(double);
   double mean_cycles(double);
   double mean_cache_misses(double);
+  double mean_cache_refs(double);
 
   Results();
 };

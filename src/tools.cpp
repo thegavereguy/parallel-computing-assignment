@@ -67,6 +67,7 @@ Results::Results() {
   instructions = std::vector<double>();
   cycles       = std::vector<double>();
   cache_misses = std::vector<double>();
+  cache_refs   = std::vector<double>();
 }
 
 void Results::push_back_cycles(double value) { cycles.push_back(value); }
@@ -76,6 +77,10 @@ void Results::push_back_instructions(double value) {
 void Results::push_back_cache_misses(double value) {
   cache_misses.push_back(value);
 }
+void Results::push_back_cache_refs(double value) {
+  cache_refs.push_back(value);
+}
+
 double Results::mean_cycles(double conf) { return mean(cycles, conf); }
 double Results::mean_instructions(double conf) {
   return mean(instructions, conf);
@@ -83,6 +88,7 @@ double Results::mean_instructions(double conf) {
 double Results::mean_cache_misses(double conf) {
   return mean(cache_misses, conf);
 }
+double Results::mean_cache_refs(double conf) { return mean(cache_refs, conf); }
 double Results::mean(std::vector<double> &v) {
   double sum = 0;
   for (auto &i : v) {
