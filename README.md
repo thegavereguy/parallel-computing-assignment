@@ -74,8 +74,12 @@ The following variables in the script can be modified according to the testers n
     - `0`: The benchmark is skipped entirely.
     - `1`: The embedded cache benchmark is run (more precise). Check [this](#embedded) for more info.
     - `2`: The external cache benchmark is run (higher compatibility). Check [this](#external) for more info.
+- `BUILD_OPTIMIZED`: Sets the type of optimization to apply during the compilation stage. Check [this](#optimization) for more info. It can be one of the following options:
+    - '0': No optimization
+    - '1': -O1 optimization
+    - '2': -O2 optimization
 
-The number of threads used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1,2,4,8 and 16 threads.  
+The number of threads used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1, 2, 4, 8 and 16 threads.  
 
 ### Automatic execution on PBS cluster
 
@@ -101,3 +105,4 @@ talk about memory and ache tests.
 cpp_perf
 #### External
 external perf
+## Optimization
