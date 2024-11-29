@@ -14,7 +14,7 @@ if [ -z "$BENCHMARK_SAMPLES" ]; then
 fi
 
 if [ -z "$BENCHMARK_CONFIDENCE_INTERVAL" ]; then
-	export BENCHMARK_CONFIDENCE_INTERVAL=0.40;
+	export BENCHMARK_CONFIDENCE_INTERVAL=0.30;
 fi
 
 if [ -z "$RUN_CACHE_BENCHMARKS" ]; then
@@ -25,8 +25,8 @@ else
 fi
 
 if [ -z "$BUILD_OPTIMIZED" ]; then
-	echo "BUILD_OPTIMIZED is not set. exiting";
-	exit -2;
+	export BUILD_OPTIMIZED=0;
+	build_optimized=0;
 else
 	build_optimized=$BUILD_OPTIMIZED;
 fi

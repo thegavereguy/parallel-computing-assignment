@@ -2,18 +2,25 @@
 
 <!--toc:start-->
 - [Parallel computing assignment](#parallel-computing-assignment)
+  - [Project structure](#project-structure)
+  - [Dependencies](#dependencies)
   - [Getting started](#getting-started)
   - [Building](#building)
   - [Execution](#execution)
-    - [Manual execution](#manual-execution)
+    - [Manual execution on local machine](#manual-execution-on-local-machine)
       - [Running the whole project](#running-the-whole-project)
     - [Automatic execution on PBS cluster](#automatic-execution-on-pbs-cluster)
   - [Benchmarks](#benchmarks)
     - [Execution time](#execution-time)
-    - [Memory and cache](#memory-and-cache)
+    - [Cache usage](#cache-usage)
       - [Embedded](#embedded)
       - [External](#external)
+  - [Optimization](#optimization)
 <!--toc:end-->
+
+## Project structure
+
+## Dependencies
 
 ## Getting started
 
@@ -83,6 +90,20 @@ The following variables in the script can be modified according to the testers n
     - `1`: All the previous results are cleared.
 
 The *number of threads* used for each iteration can be modifying the values in the `threads` bash array to adapt the execution to the host machine; the default value of `( 1 2 4 8 16 )`, executed each benchmark routing 5 times, respectively with 1, 2, 4, 8 and 16 threads.  
+
+#### Running a single batch
+
+If running all the benchmarks in one go is not needed, it's possible to run a single batch (runs every function for all the set matrix dimensions, but only for a specified number of thread) by directly using the `run_benchmkarks.sh` bash script.
+The operations needed are the same as if running the whole project, but specifying the number of threads to use is now possible by exporting the `OMP_NUM_THREADS` variable, by overwriting the default value of `1`.
+
+#### Running a single benchmark
+
+The executable provided after compiling the benchmarks create using Catch2 (it's default path relative to the repos directory is `./build/tests/benchmarks`) allow running benchmarks limited to one or multiple functions, with the various options described above expressed directly as arguments.
+
+```bash
+# Run 15 samples of the benchmark of parallel matrix transposition, with a confidence interval of 0.45 and print the result using the custom csv reporter
+./build/tests/benchmarks -r csv --benchmark-samples=15 --benchmark-confidence-interval=0.45
+```
 
 ### Automatic execution on PBS cluster
 
