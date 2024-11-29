@@ -3,7 +3,8 @@
 export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 export BENCH_SAMPLES=10
 export RUN_CACHE_BENCHMARKS=1
-export BUILD_OPTIMIZED=2
+export BUILD_OPTIMIZED=1
+export CLEAR_RESULTS=0
 
 threads=( 1 2 4 8 )
 
@@ -17,16 +18,23 @@ else
 	build_optimized=$BUILD_OPTIMIZED;
 fi
 
-mkdir results
-rm -rf results/*
-mkdir results/benchmarks
-mkdir results/cache
+mkdir results > /dev/null
+
+if [ ${CLEAR_RESULTS} == 1 ]; then
+	echo "Clearing previous results";
+	rm -rf results/*
+else
+  echo "Keeping previous results";
+fi
+
+mkdir results/benchmarks > /dev/null
+mkdir results/cache > /dev/null
 
 # Print information about the cpu
 lscpu > results/cpu_info.txt
 
 # Creta a build directory if it does not exist
-mkdir build
+mkdir build > /dev/null
 cd build
 
 # Remove the previous build

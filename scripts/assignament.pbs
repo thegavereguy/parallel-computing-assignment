@@ -28,33 +28,63 @@ fi
 # Select the working directory
 cd $HOME/$PROJECT_DIR
 
-export BENCHMARK_CONFIDENCE_INTERVAL=0.30
-export BENCH_SAMPLES=10
-export RUN_CACHE_BENCHMARKS=1
-export BUILD_OPTIMIZED=2
-
-threads=( 1 2 4 8 16 )
-
-######################################################
-
 if [ -z "$BUILD_OPTIMIZED" ]; then
 	echo "BUILD_OPTIMIZED is not set. Setting it to 0";
 	export BUILD_OPTIMIZED=0;
 	build_optimized=0;
 else
+	echo "BUILD_OPTIMIZED is set to $BUILD_OPTIMIZED";
 	build_optimized=$BUILD_OPTIMIZED;
 fi
 
-mkdir results
-rm -rf results/*
-mkdir results/benchmarks
-mkdir results/cache
+if [ -z "$BENCH_SAMPLES" ]; then
+	export BENCH_SAMPLES=10
+fi
+echo "BENCH_SAMPLES is set to $BENCH_SAMPLES";
+
+if [ -z "$BENCHMARK_CONFIDENCE_INTERVAL" ]; then
+	export BENCHMARK_CONFIDENCE_INTERVAL=0.30
+fi
+echo "BENCHMARK_CONFIDENCE_INTERVAL is set to $BENCHMARK_CONFIDENCE_INTERVAL";
+
+if [ -z RUN_CACHE_BENCHMARKS ]; then
+	export RUN_CACHE_BENCHMARKS=1
+	run_cache_benchmarks=1
+else
+	run_cache_benchmarks=$RUN_CACHE_BENCHMARKS
+fi
+echo "RUN_CACHE_BENCHMARKS is set to $run_cache_benchmarks";
+
+if [ -z CLEAR_RESULTS ]; then
+	export CLEAR_RESULTS=0
+	clear_results=0
+else
+	clear_results=$CLEAR_RESULTS
+fi
+
+threads=( 1 2 4 8 16 )
+echo "Threads: ${threads[@]}"
+
+######################################################
+
+
+mkdir results > /dev/null
+
+if [ ${clear_results} == 1 ]; then
+	echo "Clearing previous results";
+	rm -rf results/*
+else
+	echo "Keeping previous results";
+fi
+
+mkdir results/benchmarks > /dev/null
+mkdir results/cache > /dev/null
 
 # Save information about the cpu
 lscpu > results/cpu_info.txt
 
 # Creta a build directory if it does not exist
-mkdir build
+mkdir build > /dev/null
 cd build
 
 # Remove the previous build
