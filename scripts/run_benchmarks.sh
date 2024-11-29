@@ -50,6 +50,6 @@ fi
 echo "Running $BENCHMARK_SAMPLES samples per benchmark with $BENCHMARK_CONFIDENCE_INTERVAL confidence interval";
 for i in ${array[@]}; do
 		echo "Running benchmark for [$i] with $OMP_NUM_THREADS threads";
-		eval "./build/tests/benchmarks" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES" "--benchmark-confidence-interval=$BENCHMARK_CONFIDENCE_INTERVAL" > results/benchmarks/"$i"".$OMP_NUM_THREADS.csv";
+		eval "./build/tests/benchmarks" \"[$i]\" "-r csv" "--benchmark-samples=$BENCHMARK_SAMPLES" "--benchmark-confidence-interval=$BENCHMARK_CONFIDENCE_INTERVAL" > results/benchmarks/"$i"".$BUILD_OPTIMIZED.$OMP_NUM_THREADS.csv";
 done
 
