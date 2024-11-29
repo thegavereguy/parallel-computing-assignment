@@ -39,8 +39,8 @@ if [ ${run_cache_benchmarks} == 1 ]; then
 elif [ ${run_cache_benchmarks} == 2 ]; then
 	for i in ${array2[@]}; do
 		echo "Running external cache benchmark for [${array[$i]}] with $OMP_NUM_THREADS threads";
-		eval "perf record  -e LLC-stores,LLC-loads,cache-misses " "--output" "results/cache/""${array[$i]}"".$OMP_NUM_THREADS.data" "./build/apps/run" "1" "$i" ;
-		eval "perf stat -e LLC-stores,LLC-loads,cache-misses " "-o results/cache/""${array[$i]}"".$OMP_NUM_THREADS.txt" "./build/apps/run" "1" "$i";
+		eval "perf record  -e LLC-stores,LLC-loads,cache-misses " "--output" "results/cache/""${array[$i]}"".$BUILD_OPTIMIZED.$OMP_NUM_THREADS.data" "./build/apps/run" "1" "$i" ;
+		eval "perf stat -e LLC-stores,LLC-loads,cache-misses " "-o results/cache/""${array[$i]}"".$BUILD_OPTIMIZED.$OMP_NUM_THREADS.txt" "./build/apps/run" "1" "$i";
 	done
 else
 	echo "Skipping cache benchmarks";

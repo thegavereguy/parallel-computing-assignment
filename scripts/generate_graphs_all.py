@@ -20,12 +20,15 @@ for file_path in glob.glob(benchmarks_pattern):
     print(f"Processing file: {file_path}")
     # Extract the test name and thread number from the filename
     file_name = os.path.basename(file_path)
-    test_name_parts = file_name.replace(".txt", "").split(
+    test_name_parts = file_name.replace(".csv", "").split(
         "."
     )  # Split at '.' to get parts
+
+    optimization_level = test_name_parts[1]
+
     test_name = test_name_parts[0]
     thread_count = (
-        test_name_parts[1] if len(test_name_parts) > 1 else "Unknown"
+        test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
     )  # Use 'Unknown' if thread count is missing
 
     # Load data from the CSV file
@@ -36,6 +39,7 @@ for file_path in glob.glob(benchmarks_pattern):
     # Calculate asymmetric error bars
     data["ErrorMinus"] = data["MEAN"] - data["MINT"]  # Error on the lower side
     data["ErrorPlus"] = data["MAXT"] - data["MEAN"]  # Error on the upper side
+    data["opt_level"] = optimization_level
 
     # Append to the main DataFrame
     all_benchmarks = pd.concat([all_benchmarks, data])
@@ -49,8 +53,9 @@ for file_path in glob.glob(cache_pattern):
         "."
     )  # Split at '.' to get parts
     test_name = test_name_parts[0]
+    optimization_level = test_name_parts[1]
     thread_count = (
-        test_name_parts[1] if len(test_name_parts) > 1 else "Unknown"
+        test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
     )  # Use 'Unknown' if thread count is missing
 
     # Load data from the CSV file
@@ -59,6 +64,7 @@ for file_path in glob.glob(cache_pattern):
     data["Threads"] = thread_count  # Add thread count as a column
 
     data["CacheMissRatio"] = data["CACHEMISS"] / data["CACHEREF"]
+    data["opt_level"] = optimization_level
 
     # Append to the main DataFrame
     all_cache = pd.concat([all_cache, data])
@@ -80,13 +86,15 @@ for test_name in all_benchmarks["Test"].unique():
     fig = go.Figure()
 
     # Plot each thread count as a separate line for benchmarks
-    for thread_count, thread_data in benchmark_data.groupby("Threads"):
+    for (thread_count, opt_level), thread_data in benchmark_data.groupby(
+        ["Threads", "opt_level"]
+    ):
         fig.add_trace(
             go.Scatter(
                 x=thread_data["DIMENSION"],
                 y=thread_data["MEAN"],
                 mode="lines+markers",
-                name=f"Threads: {thread_count} (Time)",
+                name=f"Execution time: {thread_count} threads, opt_level: {opt_level}",
                 error_y=dict(
                     type="data",
                     symmetric=False,
@@ -104,8 +112,8 @@ for test_name in all_benchmarks["Test"].unique():
 
     # Grafico del rapporto cache misses/references
     if not cache_data.empty:
-        for (test_name, thread_count), thread_data in cache_data.groupby(
-            ["Test", "Threads"]
+        for (thread_count, opt_level), thread_data in cache_data.groupby(
+            ["Threads", "opt_level"]
         ):
             print(f"Cache data for {test_name} with {thread_count} threads:")
             print(thread_data)
@@ -114,7 +122,7 @@ for test_name in all_benchmarks["Test"].unique():
                     x=thread_data["DIMENSION"],
                     y=thread_data["CacheMissRatio"],
                     mode="lines+markers",
-                    name=f"{test_name} Cache Miss Ratio (Threads: {thread_count})",
+                    name=f"{test_name} Cache Miss Ratio: {thread_count} threads, opt_level: {opt_level}",
                     yaxis="y2",
                     line=dict(dash="dot"),  # Linea tratteggiata
                     hovertemplate="DIMENSION: %{x}<br>Cache Miss Ratio: %{y:.2%}<br>Threads: %{name}<extra></extra>",

@@ -1,4 +1,13 @@
-# Create directory for the results and clear it
+# change the following variables to the desired values
+
+export BENCHMARK_CONFIDENCE_INTERVAL=0.30
+export BENCH_SAMPLES=10
+export RUN_CACHE_BENCHMARKS=1
+export BUILD_OPTIMIZED=0
+
+threads=( 1 2 4 8 )
+
+######################################################
 
 if [ -z "$BUILD_OPTIMIZED" ]; then
 	echo "BUILD_OPTIMIZED is not set. Setting it to 0";
@@ -42,14 +51,6 @@ fi
 make -j4
 cd ..
 
-export BENCHMARK_CONFIDENCE_INTERVAL=0.30
-
-# Set the number of samples for the benchmarks
-export BENCH_SAMPLES=10
-
-export RUN_CACHE_BENCHMARKS=0
-
-threads=( 1 2 4 8 )
 for i in ${threads[@]}; do
 	export OMP_NUM_THREADS=$i
 	# Run the benchmarks and save the results
