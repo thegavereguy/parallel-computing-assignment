@@ -9,6 +9,8 @@
   - [Execution](#execution)
     - [Manual execution on local machine](#manual-execution-on-local-machine)
       - [Running the whole project](#running-the-whole-project)
+      - [Running a single batch](#running-a-single-batch)
+      - [Running a single benchmark](#running-a-single-benchmark)
     - [Automatic execution on PBS cluster](#automatic-execution-on-pbs-cluster)
   - [Benchmarks](#benchmarks)
     - [Execution time](#execution-time)
@@ -20,7 +22,19 @@
 
 ## Project structure
 
+- `/`
+    - `apps/`
+    - `include/lib/`
+    - `report/`
+    - `scripts/`
+    - `src/`
+    - `tests/`
+
 ## Dependencies
+
+- (Catch2)[https://github.com/catchorg/Catch2/] - Testing, benchmarking and reporting for execution time.
+- (perf)[https://perfwiki.github.io/main/] - General benchmarking.
+- (perf-cpp)[https://github.com/jmuehlig/perf-cpp] - Embedding calls to perf primitives directly in source code.
 
 ## Getting started
 
