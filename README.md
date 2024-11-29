@@ -117,12 +117,23 @@ All results are store in the `results` folder, subdivided by typology.
 The conditions in which each benchmark was executed can be determined by the filename. It follows this format: `benchmark_name.optimization_type.thread_count.csv`.
 This is valid for all tests, except for cache tests when run on the PBS cluster, which are discussed later. 
 
+(Scrivere del run_benchmark.sh)
+
 ### Execution time
-again
-### Memory and cache
-talk about memory and ache tests.
+
+This category of tests aims at recording the average time that each execution of the function takes in order to complete at the variation of the size of the matrix to be transposed.
+The result files are encoded in CSV format and provide the following information for each execution cycle (the minimum number of time that a function is executed can be set with the `BENCH_SAMPLES` variable, check [here](#running-the-whole-project)).
+Consequent runs may be needed if one or more result stray out of the confidence interval, usually due to system inconsistencies.
+
+In order to simplify the benchmark operations, the [Catch2](https://github.com/catchorg/Catch2/) library was used, as it provides tools to run large amount of tests and reporting the required data.
+The provided `ADVANCED_BENCHMARK` macro was used to set up the ambient needed to run each function and perform the subsequent cleanup, while making sure to only report the actual execution time of the function without taking any overhead into account.
+The data is then reported using a custom `Reporter` that encoded into the CSV format.
+
+### Cache usage
+talk about  ache tests.
 #### Embedded
 cpp_perf
 #### External
 external perf
 ## Optimization
+ gl
