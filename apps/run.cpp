@@ -21,8 +21,11 @@ int main(int argc, char **argv) {
     for (int i = 0; i < samples; i++) {
       float **A = new float *[n];
       float **B = new float *[n];
+      float **C = new float *[n];
       random_allocation(A, n);
       empty_allocation(B, n);
+      random_allocation(C, n);
+      symmetrize(n, C);
 
       switch (fun) {
         case 0:
@@ -40,6 +43,21 @@ int main(int argc, char **argv) {
         case 4:
           transpose_parallel_sse(n, A, B);
           break;
+        case 5:
+          symmetry_check_sequential(n, C);
+          break;
+        case 6:
+          symmetry_check_parallel(n, C);
+          break;
+        case 7:
+          symmetry_check_collapse(n, C);
+          break;
+        case 8:
+          symmetry_check_unroll(n, C);
+          break;
+        case 9:
+          symmetry_check_block(n, C);
+          break;
         default:
           printf("Invalid function\n");
           return -1;
@@ -50,6 +68,7 @@ int main(int argc, char **argv) {
 
       deallocate(A, n);
       deallocate(B, n);
+      deallocate(C, n);
     }
   }
 

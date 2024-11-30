@@ -98,3 +98,76 @@ void transpose_parallel_sse(int n, float **A, float **B) {
     }
   }
 }
+
+bool symmetry_check_sequential(int n, float **A) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (A[i][j] != A[j][i]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool symmetry_check_parallel(int n, float **A) {
+  bool sym = true;
+#pragma omp parallel for shared(sym)
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (A[i][j] != A[j][i]) {
+        sym = false;
+      }
+    }
+  }
+  return sym;
+}
+
+bool symmetry_check_collapse(int n, float **A) {
+  bool sym = true;
+#pragma omp parallel for collapse(2) shared(sym)
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (A[i][j] != A[j][i]) {
+        sym = false;
+      }
+    }
+  }
+  return sym;
+}
+
+bool symmetry_check_unroll(int n, float **A) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j += 4) {
+      if (A[i][j] != A[j][i] || A[i][j + 1] != A[j + 1][i] ||
+          A[i][j + 2] != A[j + 2][i] || A[i][j + 3] != A[j + 3][i]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool symmetry_check_block(int n, float **A) {
+  for (int i = 0; i < n; i += 4) {
+    for (int j = 0; j < n; j += 4) {
+      for (int ii = i; ii < i + 4; ii++) {
+        for (int jj = j; jj < j + 4; jj++) {
+          if (A[ii][jj] != A[jj][ii]) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+// simmtrize the first half of the matrix
+void symmetrize(int n, float **A) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < i; j++) {
+      A[j][i] = A[i][j];
+    }
+  }
+}

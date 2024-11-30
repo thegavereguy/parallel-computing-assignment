@@ -18,13 +18,9 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_sequential(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -40,13 +36,9 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_parallel(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -63,13 +55,9 @@ TEST_CASE("Matrix transposition parallel with collapse",
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_parallel_collapse(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -85,13 +73,9 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_parallel_unroll(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -107,13 +91,9 @@ TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_vec(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -129,13 +109,9 @@ TEST_CASE("Matrix transposition with block sse", "[mat_trans_blk_sse]") {
   float** A = new float*[n];
   float** B = new float*[n];
 
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
+  random_allocation(A, n);
+  empty_allocation(B, n);
+
   transpose_parallel_sse(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -144,6 +120,118 @@ TEST_CASE("Matrix transposition with block sse", "[mat_trans_blk_sse]") {
   }
   deallocate(A, n);
   deallocate(B, n);
+}
+
+TEST_CASE("Check symmetry of matrix transposition - sequential",
+          "[sym_check_seq]") {
+  SECTION("verify symmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+    REQUIRE(symmetry_check_sequential(n, A));
+    deallocate(A, n);
+  }
+
+  SECTION("verify asymmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+
+    A[3][2] = -1;
+    REQUIRE_FALSE(symmetry_check_sequential(n, A));
+    deallocate(A, n);
+  }
+}
+
+TEST_CASE("Check symmetry of matrix transposition - parallel",
+          "[sym_check_par]") {
+  SECTION("verify symmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_parallel(n, A));
+    deallocate(A, n);
+  }
+
+  SECTION("verify asymmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+    symmetrize(n, A);
+
+    A[3][2] = -1;
+    REQUIRE_FALSE(symmetry_check_parallel(n, A));
+    deallocate(A, n);
+  }
+}
+
+TEST_CASE("Check symmetry of matrix transposition - parallel collapse",
+          "[sym_check_par_col]") {
+  SECTION("verify symmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_collapse(n, A));
+
+    deallocate(A, n);
+  }
+
+  SECTION("verify asymmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+
+    A[3][2] = -1;
+    REQUIRE_FALSE(symmetry_check_collapse(n, A));
+
+    deallocate(A, n);
+  }
+}
+
+TEST_CASE("Check symmetry of matrix transposition - unroll",
+          "[sym_check_unr]") {
+  SECTION("verify symmetric") {
+    int n     = 4;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_unroll(n, A));
+
+    deallocate(A, n);
+  }
+
+  SECTION("verify asymmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+    symmetrize(n, A);
+
+    A[3][2] = -1;
+    REQUIRE_FALSE(symmetry_check_unroll(n, A));
+
+    deallocate(A, n);
+  }
 }
 
 // define a custom reporter

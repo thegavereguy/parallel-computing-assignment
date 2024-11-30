@@ -25,13 +25,10 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+
+      random_allocation(A, n);
+      empty_allocation(B, n);
+
       meter.measure([n, A, B] { return transpose_sequential(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -52,13 +49,9 @@ TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+
+      random_allocation(A, n);
+      empty_allocation(B, n);
       meter.measure([n, A, B] { return transpose_parallel(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -81,13 +74,9 @@ TEST_CASE("Matrix transposition parallel with collapse",
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+      random_allocation(A, n);
+      empty_allocation(B, n);
+
       meter.measure([n, A, B] { return transpose_parallel_collapse(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -109,13 +98,9 @@ TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+      random_allocation(A, n);
+      empty_allocation(B, n);
+
       meter.measure([n, A, B] { return transpose_vec(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -136,13 +121,9 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+      random_allocation(A, n);
+      empty_allocation(B, n);
+
       meter.measure([n, A, B] { return transpose_parallel_unroll(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -164,13 +145,9 @@ TEST_CASE("Matrix transposition parallel with sse instrinsics",
       int n     = i;
       float** A = new float*[n];
       float** B = new float*[n];
-      for (int i = 0; i < n; i++) {
-        A[i] = new float[n]();
-        B[i] = new float[n]();
-        for (int j = 0; j < n; j++) {
-          A[i][j] = i * n + j;
-        }
-      }
+      random_allocation(A, n);
+      empty_allocation(B, n);
+
       meter.measure([n, A, B] { return transpose_parallel_sse(n, A, B); });
       deallocate(A, n);
       deallocate(B, n);
@@ -179,6 +156,115 @@ TEST_CASE("Matrix transposition parallel with sse instrinsics",
 
   delete[] name;
 }
+TEST_CASE("Symmetry check sequential", "[sym_check_seq]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n     = i;
+      float** A = new float*[n];
+      random_allocation(A, n);
+      symmetrize(n, A);
+
+      meter.measure([n, A] { return symmetry_check_sequential(n, A); });
+      deallocate(A, n);
+    };
+  }
+
+  delete[] name;
+}
+TEST_CASE("Symmetry check parallel", "[sym_check_par]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n     = i;
+      float** A = new float*[n];
+      random_allocation(A, n);
+      symmetrize(n, A);
+
+      meter.measure([n, A] { return symmetry_check_parallel(n, A); });
+      deallocate(A, n);
+    };
+  }
+
+  delete[] name;
+}
+
+TEST_CASE("Symmetry check parallel collapse", "[sym_check_par_col]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n     = i;
+      float** A = new float*[n];
+      random_allocation(A, n);
+      symmetrize(n, A);
+
+      meter.measure([n, A] { return symmetry_check_collapse(n, A); });
+      deallocate(A, n);
+    };
+  }
+
+  delete[] name;
+}
+
+TEST_CASE("Symmetry check unroll", "[sym_check_unr]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n     = i;
+      float** A = new float*[n];
+      random_allocation(A, n);
+      symmetrize(n, A);
+
+      meter.measure([n, A] { return symmetry_check_unroll(n, A); });
+      deallocate(A, n);
+    };
+  }
+
+  delete[] name;
+}
+
+TEST_CASE("Symmetry check block", "[sym_check_blk]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n     = i;
+      float** A = new float*[n];
+      random_allocation(A, n);
+      symmetrize(n, A);
+
+      meter.measure([n, A] { return symmetry_check_block(n, A); });
+      deallocate(A, n);
+    };
+  }
+
+  delete[] name;
+}
+
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
   using StreamingReporterBase::StreamingReporterBase;
