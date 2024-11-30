@@ -1,6 +1,6 @@
 #!/bin/bash
 
-array=("mat_trans_par" "mat_trans_par_col" "mat_trans_seq" "mat_trans_par_unr" "mat_trans_vec" "mat_trans_par_sse" "sym_check_seq" "sym_check_par" "sym_check_col" "sym_check_unr" "sym_check_blk" );
+array=("mat_trans_par" "mat_trans_par_col" "mat_trans_seq" "mat_trans_par_unr" "mat_trans_vec" "mat_trans_par_sse" "sym_check_seq" "sym_check_par" "sym_check_par_col" "sym_check_unr" "sym_check_blk" );
 array2=(1 2 0 3 4 5 6 7 8 9);
 
 # check if the OMP_NUM_THREADS is set
