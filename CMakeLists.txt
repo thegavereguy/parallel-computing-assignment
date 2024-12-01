@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(BUILD_OPTIMIZED_O1 "Build with -O1" OFF)
 option(BUILD_OPTIMIZED_O2 "Build with -O2" OFF)
-option(BUILD_OPTIMIZED_VEC "Build with vectorization" OFF)
+option(BUILD_OPTIMIZED_OF "Build with -Ofast" OFF)
 
 Include(FetchContent)
 
