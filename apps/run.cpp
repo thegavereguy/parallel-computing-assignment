@@ -41,30 +41,27 @@ int main(int argc, char **argv) {
           transpose_parallel_unroll(n, A, B);
           break;
         case 4:
-          transpose_parallel_sse(n, A, B);
+          transpose_vec(n, A, B);
           break;
         case 5:
-          symmetry_check_sequential(n, C);
+          transpose_parallel_sse(n, A, B);
           break;
         case 6:
-          symmetry_check_parallel(n, C);
+          symmetry_check_sequential(n, C);
           break;
         case 7:
-          symmetry_check_collapse(n, C);
+          symmetry_check_parallel(n, C);
           break;
         case 8:
-          symmetry_check_unroll(n, C);
+          symmetry_check_collapse(n, C);
           break;
         case 9:
+          symmetry_check_unroll(n, C);
+          break;
+        case 10:
           symmetry_check_block(n, C);
           break;
-        default:
-          printf("Invalid function\n");
-          return -1;
-          break;
       }
-
-      /// Print the result to the console
 
       deallocate(A, n);
       deallocate(B, n);

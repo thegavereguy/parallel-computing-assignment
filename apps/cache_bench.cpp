@@ -11,9 +11,14 @@ int main(int argc, char **argv) {
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <samples> <function>" << std::endl;
     std::cerr << "  <samples>  : number of samples to take" << std::endl;
-    std::cerr << "  <function> : 0 for sequential, 1 for parallel, 2 for "
-                 "parallel collapse, 3 for parallel unroll, 4 for parallel sse"
-              << std::endl;
+    std::cerr
+        << "  <function> : 0 for transpose sequential, 1 for transpose "
+           "parallel, 2 for "
+           "transpose parallel collapse, 3 for transpose parallel unroll, 4 "
+           "for transpose parallel sse, 5 for symmetry check sequential, 6 for "
+           "symmetry check parallel, 7 for symmetry check collapse, 8 for "
+           "symmetry check unroll, 9 for symmetry check block"
+        << std::endl;
 
     return 1;
   }
@@ -53,21 +58,24 @@ int main(int argc, char **argv) {
           transpose_parallel_unroll(n, A, B);
           break;
         case 4:
-          transpose_parallel_sse(n, A, B);
+          transpose_vec(n, A, B);
           break;
         case 5:
-          symmetry_check_sequential(n, C);
+          transpose_parallel_sse(n, A, B);
           break;
         case 6:
-          symmetry_check_parallel(n, C);
+          symmetry_check_sequential(n, C);
           break;
         case 7:
-          symmetry_check_collapse(n, C);
+          symmetry_check_parallel(n, C);
           break;
         case 8:
-          symmetry_check_unroll(n, C);
+          symmetry_check_collapse(n, C);
           break;
         case 9:
+          symmetry_check_unroll(n, C);
+          break;
+        case 10:
           symmetry_check_block(n, C);
           break;
       }

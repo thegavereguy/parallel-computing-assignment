@@ -233,7 +233,33 @@ TEST_CASE("Check symmetry of matrix transposition - unroll",
     deallocate(A, n);
   }
 }
+TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
+  SECTION("verify symmetric") {
+    int n     = 4;
+    float** A = new float*[n];
 
+    random_allocation(A, n);
+
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_block(n, A));
+
+    deallocate(A, n);
+  }
+
+  SECTION("verify asymmetric") {
+    int n     = 16;
+    float** A = new float*[n];
+
+    random_allocation(A, n);
+    symmetrize(n, A);
+
+    A[3][2] = -1;
+    REQUIRE_FALSE(symmetry_check_block(n, A));
+
+    deallocate(A, n);
+  }
+}
 // define a custom reporter
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
