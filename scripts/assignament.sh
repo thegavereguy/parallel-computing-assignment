@@ -53,7 +53,7 @@ elif [ ${build_optimized} == 3 ]; then
 	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
 elif [ ${build_optimized} == 0 ]; then
 	echo "Building with no optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
 else
 	echo "Invalid BUILD_OPTIMIZED value.";
 	exit -2;
