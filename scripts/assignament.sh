@@ -44,16 +44,16 @@ cd build
 #
 if [ ${build_optimized} == 1 ]; then
 	echo "Building with -O1 optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=ON -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
+	cmake  -DBUILD_OPTIMIZED_O1=ON -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
 elif [ ${build_optimized} == 2 ]; then
 	echo "Building with -O2 optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON -DBUILD_OPTIMIZED_VEC=OFF..;
+	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON -DBUILD_OPTIMIZED_VEC=OFF..;
 elif [ ${build_optimized} == 3 ]; then
 	echo "Building with SIMD optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
+	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
 elif [ ${build_optimized} == 0 ]; then
 	echo "Building with no optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
+	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
 else
 	echo "Invalid BUILD_OPTIMIZED value.";
 	exit -2;
