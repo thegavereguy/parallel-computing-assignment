@@ -32,9 +32,9 @@
 
 ## Dependencies
 
-- (Catch2)[https://github.com/catchorg/Catch2/] - Testing, benchmarking and reporting for execution time.
-- (perf)[https://perfwiki.github.io/main/] - General benchmarking.
-- (perf-cpp)[https://github.com/jmuehlig/perf-cpp] - Embedding calls to perf primitives directly in source code.
+- [Catch2](https://github.com/catchorg/Catch2/) - Testing, benchmarking and reporting for execution time.
+- [perf](https://perfwiki.github.io/main/) - General benchmarking.
+- [perf-cpp](https://github.com/jmuehlig/perf-cpp) - Embedding calls to perf primitives directly in source code.
 
 ## Getting started
 
