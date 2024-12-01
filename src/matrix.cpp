@@ -44,23 +44,26 @@ void transpose_parallel_unroll(int n, float **A, float **B) {
 }
 
 // matrix transposition with vectorization
-void transpose_vec(int n, float **A, float **B) {
+void transpose_vec(int n, float *A, float *B) {
 #pragma omp simd
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      B[i][j] = A[j][i];
+      B[i * n + j] = A[j * n + i];
     }
   }
 }
 
-void transpose_parallel_block(int n, float **A, float **B) {
-  int block_size = 4;
+void transpose_parallel_block(int n, float *A, float *B) {
+  int block_size = 4;  // Block size of 4
   int i, j, ii, jj;
+
+// Parallelize the outer loops
+#pragma omp parallel for private(ii, jj)
   for (i = 0; i < n; i += block_size) {
     for (j = 0; j < n; j += block_size) {
       for (ii = i; ii < i + block_size; ii++) {
         for (jj = j; jj < j + block_size; jj++) {
-          B[ii][jj] = A[jj][ii];
+          B[ii * n + jj] = A[jj * n + ii];
         }
       }
     }
@@ -75,26 +78,26 @@ void transpose_parallel_row(int n, float **A, float **B) {
   }
 }
 
-void transpose_block_sse(float *src1, float *src2, float *src3, float *src4,
-                         float *dst1, float *dst2, float *dst3, float *dst4) {
-  __m128 row1 = _mm_loadu_ps(src1);
-  __m128 row2 = _mm_loadu_ps(src2);
-  __m128 row3 = _mm_loadu_ps(src3);
-  __m128 row4 = _mm_loadu_ps(src4);
+void transpose_block_sse(float *src, float *dst, int n) {
+  __m128 row1 = _mm_loadu_ps(&src[0 * n]);
+  __m128 row2 = _mm_loadu_ps(&src[1 * n]);
+  __m128 row3 = _mm_loadu_ps(&src[2 * n]);
+  __m128 row4 = _mm_loadu_ps(&src[3 * n]);
+
   _MM_TRANSPOSE4_PS(row1, row2, row3, row4);
 
-  _mm_storeu_ps(dst1, row1);
-  _mm_storeu_ps(dst2, row2);
-  _mm_storeu_ps(dst3, row3);
-  _mm_storeu_ps(dst4, row4);
+  _mm_storeu_ps(&dst[0 * n], row1);
+  _mm_storeu_ps(&dst[1 * n], row2);
+  _mm_storeu_ps(&dst[2 * n], row3);
+  _mm_storeu_ps(&dst[3 * n], row4);
 }
 
-void transpose_parallel_sse(int n, float **A, float **B) {
+void transpose_parallel_sse(int n, float *A, float *B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i += 4) {
     for (int j = 0; j < n; j += 4) {
-      transpose_block_sse(&A[i][j], &A[i + 1][j], &A[i + 2][j], &A[i + 3][j],
-                          &B[j][i], &B[j + 1][i], &B[j + 2][i], &B[j + 3][i]);
+      // Transpose a 4x4 block
+      transpose_block_sse(&A[i * n + j], &B[j * n + i], n);
     }
   }
 }

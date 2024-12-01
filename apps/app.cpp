@@ -34,30 +34,31 @@ int main(int argc, char** argv) {
   // }
   // deallocate(A, n);
   // deallocate(B, n);
-  int n     = 4096;
-  float** A = new float*[n];
-  float** B = new float*[n];
-
-  for (int i = 0; i < n; i++) {
-    A[i] = new float[n];
-    B[i] = new float[n];
-    for (int j = 0; j < n; j++) {
-      A[i][j] = i * n + j;
-    }
-  }
-  transpose_parallel_sse(n, A, B);
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      if (A[i][j] != B[j][i]) {
-        std::cout << "Error: A[" << i << "][" << j << "] = " << A[i][j]
-                  << ", B[" << i << "][" << j << "] = " << B[i][j] << std::endl;
-        return -1;
-      };
-      // printf("A[%d][%d] = %f, B[%d][%d] = %f\n", i, j, A[i][j], i, j,
-      // B[i][j]);
-    }
-  }
-  deallocate(A, n);
-  deallocate(B, n);
+  // int n     = 4096;
+  // float** A = new float*[n];
+  // float** B = new float*[n];
+  //
+  // for (int i = 0; i < n; i++) {
+  //   A[i] = new float[n];
+  //   B[i] = new float[n];
+  //   for (int j = 0; j < n; j++) {
+  //     A[i][j] = i * n + j;
+  //   }
+  // }
+  // transpose_parallel_sse(n, A, B);
+  // for (int i = 0; i < n; i++) {
+  //   for (int j = 0; j < n; j++) {
+  //     if (A[i][j] != B[j][i]) {
+  //       std::cout << "Error: A[" << i << "][" << j << "] = " << A[i][j]
+  //                 << ", B[" << i << "][" << j << "] = " << B[i][j] <<
+  //                 std::endl;
+  //       return -1;
+  //     };
+  //     // printf("A[%d][%d] = %f, B[%d][%d] = %f\n", i, j, A[i][j], i, j,
+  //     // B[i][j]);
+  //   }
+  // }
+  // deallocate(A, n);
+  // deallocate(B, n);
   return 0;
 }

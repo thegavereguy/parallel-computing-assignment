@@ -5,6 +5,7 @@ void deallocate(float **, int);
 void deallocate(int *, int);
 void random_allocation(int **, int);
 void empty_allocation(int **, int);
+void random_allocation_contiguous(float *, int);
 void random_allocation(float **, int);
 void empty_allocation(float **, int);
 

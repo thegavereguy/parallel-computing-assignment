@@ -95,15 +95,15 @@ TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n     = i;
-      float** A = new float*[n];
-      float** B = new float*[n];
-      random_allocation(A, n);
-      empty_allocation(B, n);
+      int n    = i;
+      float* A = new float[n * n];
+      float* B = new float[n * n];
+      random_allocation_contiguous(A, n);
 
       meter.measure([n, A, B] { return transpose_vec(n, A, B); });
-      deallocate(A, n);
-      deallocate(B, n);
+
+      delete[] A;
+      delete[] B;
     };
   }
 
@@ -132,6 +132,29 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
 
   delete[] name;
 }
+TEST_CASE("Matrix transposition parallel block tiling", "[mat_trans_par_blk]") {
+  char* name = new char[100];
+
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n    = i;
+      float* A = new float[n * n];
+      float* B = new float[n * n];
+      random_allocation_contiguous(A, n);
+
+      meter.measure([n, A, B] { return transpose_parallel_block(n, A, B); });
+      delete[] A;
+      delete[] B;
+    };
+  }
+
+  delete[] name;
+}
+
 TEST_CASE("Matrix transposition parallel with sse instrinsics",
           "[mat_trans_par_sse]") {
   char* name = new char[100];
@@ -142,15 +165,14 @@ TEST_CASE("Matrix transposition parallel with sse instrinsics",
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n     = i;
-      float** A = new float*[n];
-      float** B = new float*[n];
-      random_allocation(A, n);
-      empty_allocation(B, n);
+      int n    = i;
+      float* A = new float[n * n];
+      float* B = new float[n * n];
+      random_allocation_contiguous(A, n);
 
       meter.measure([n, A, B] { return transpose_parallel_sse(n, A, B); });
-      deallocate(A, n);
-      deallocate(B, n);
+      delete[] A;
+      delete[] B;
     };
   }
 

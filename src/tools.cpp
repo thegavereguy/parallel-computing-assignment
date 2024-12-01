@@ -45,7 +45,11 @@ void random_allocation(int **M, int n) {
     }
   }
 }
-
+void random_allocation_contiguous(float *M, int n) {
+  for (int i = 0; i < n * n; i++) {
+    M[i] = rand() % n;
+  }
+}
 void empty_allocation(int **M, int n) {
   for (int i = 0; i < n; i++) {
     M[i] = new int[n]();

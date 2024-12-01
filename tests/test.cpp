@@ -87,39 +87,58 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
 }
 
 TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
-  int n     = 16;
-  float** A = new float*[n];
-  float** B = new float*[n];
+  int n    = 16;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
 
-  random_allocation(A, n);
-  empty_allocation(B, n);
+  random_allocation_contiguous(A, n);
 
   transpose_vec(n, A, B);
+
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      REQUIRE(A[i][j] == B[j][i]);
+      REQUIRE(A[i * n + j] == B[j * n + i]);
     }
   }
-  deallocate(A, n);
-  deallocate(B, n);
+
+  delete[] A;
+  delete[] B;
 }
+TEST_CASE("Matrix transposition parallel with block tiling",
+          "[mat_trans_par_blk]") {
+  int n    = 16;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
 
-TEST_CASE("Matrix transposition with block sse", "[mat_trans_blk_sse]") {
-  int n     = 16;
-  float** A = new float*[n];
-  float** B = new float*[n];
+  random_allocation_contiguous(A, n);
 
-  random_allocation(A, n);
-  empty_allocation(B, n);
+  transpose_parallel_block(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i * n + j] == B[j * n + i]);
+    }
+  }
+
+  delete[] A;
+  delete[] B;
+}
+TEST_CASE("Matrix transposition parallel with block sse",
+          "[mat_trans_par_sse]") {
+  int n    = 16;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
+
+  random_allocation_contiguous(A, n);
 
   transpose_parallel_sse(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      REQUIRE(A[i][j] == B[j][i]);
+      REQUIRE(A[i * n + j] == B[j * n + i]);
     }
   }
-  deallocate(A, n);
-  deallocate(B, n);
+
+  delete[] A;
+  delete[] B;
 }
 
 TEST_CASE("Check symmetry of matrix transposition - sequential",

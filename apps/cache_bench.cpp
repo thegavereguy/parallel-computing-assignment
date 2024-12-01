@@ -58,10 +58,10 @@ int main(int argc, char **argv) {
           transpose_parallel_unroll(n, A, B);
           break;
         case 4:
-          transpose_vec(n, A, B);
+          // transpose_vec(n, A, B);
           break;
         case 5:
-          transpose_parallel_sse(n, A, B);
+          // transpose_parallel_sse(n, A, B);
           break;
         case 6:
           symmetry_check_sequential(n, C);
