@@ -47,7 +47,7 @@ if [ ${build_optimized} == 1 ]; then
 	cmake  -DBUILD_OPTIMIZED_O1=ON -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
 elif [ ${build_optimized} == 2 ]; then
 	echo "Building with -O2 optimization";
-	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON -DBUILD_OPTIMIZED_VEC=OFF..;
+	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON -DBUILD_OPTIMIZED_VEC=OFF ..;
 elif [ ${build_optimized} == 3 ]; then
 	echo "Building with SIMD optimization";
 	cmake  -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;

@@ -71,14 +71,6 @@ void transpose_parallel_block(int n, float *A, float *B) {
   }
 }
 
-void transpose_parallel_row(int n, float **A, float **B) {
-  for (int i = 0; i < n; i++) {
-    for (int k = 0; k < n; k++) {
-      B[i][k] = A[k][i];
-    }
-  }
-}
-
 void transpose_block_sse(float *src1, float *src2, float *src3, float *src4,
                          float *dst1, float *dst2, float *dst3, float *dst4) {
   __m128 row1 = _mm_loadu_ps(src1);
@@ -120,6 +112,7 @@ bool symmetry_check_parallel(int n, float **A) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       if (A[i][j] != A[j][i]) {
+#pragma omp critical
         sym = false;
       }
     }
