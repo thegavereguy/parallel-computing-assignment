@@ -124,21 +124,21 @@ TEST_CASE("Matrix transposition parallel with block tiling",
 }
 TEST_CASE("Matrix transposition parallel with block sse",
           "[mat_trans_par_sse]") {
-  int n    = 16;
-  float* A = new float[n * n];
-  float* B = new float[n * n];
-
-  random_allocation_contiguous(A, n);
+  int n     = 16;
+  float** A = new float*[n];
+  float** B = new float*[n];
+  random_allocation(A, n);
+  empty_allocation(B, n);
 
   transpose_parallel_sse(n, A, B);
+
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      REQUIRE(A[i * n + j] == B[j * n + i]);
+      REQUIRE(A[i][j] == B[j][i]);
     }
   }
-
-  delete[] A;
-  delete[] B;
+  deallocate(A, n);
+  deallocate(B, n);
 }
 
 TEST_CASE("Check symmetry of matrix transposition - sequential",
@@ -277,6 +277,40 @@ TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
     REQUIRE_FALSE(symmetry_check_block(n, A));
 
     deallocate(A, n);
+  }
+}
+TEST_CASE("Check symmetry of matrix transposition - vec", "[sym_check_vec]") {
+  SECTION("verify symmetric") {
+    int n    = 4;
+    float* A = new float[n * n];
+
+    random_allocation_contiguous(A, n);
+
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_vec(n, A));
+
+    delete[] A;
+  }
+
+  SECTION("verify asymmetric") {
+    int n    = 4;
+    float* A = new float[n * n];
+
+    random_allocation_contiguous(A, n);
+
+    symmetrize(n, A);
+
+    A[6] = -1;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        std::cout << A[i * n + j] << " ";
+      }
+      std::cout << std::endl;
+    }
+    REQUIRE_FALSE(symmetry_check_vec(n, A));
+
+    delete[] A;
   }
 }
 // define a custom reporter

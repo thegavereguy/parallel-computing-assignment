@@ -165,14 +165,15 @@ TEST_CASE("Matrix transposition parallel with sse instrinsics",
     sprintf(name, "%d", i);
 
     BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n    = i;
-      float* A = new float[n * n];
-      float* B = new float[n * n];
-      random_allocation_contiguous(A, n);
+      int n     = i;
+      float** A = new float*[n];
+      float** B = new float*[n];
+      random_allocation(A, n);
+      empty_allocation(B, n);
 
       meter.measure([n, A, B] { return transpose_parallel_sse(n, A, B); });
-      delete[] A;
-      delete[] B;
+      deallocate(A, n);
+      deallocate(B, n);
     };
   }
 
@@ -286,7 +287,27 @@ TEST_CASE("Symmetry check block", "[sym_check_blk]") {
 
   delete[] name;
 }
+TEST_CASE("Symmetry check vectorization", "[sym_check_vec]") {
+  char* name = new char[100];
 
+  // parallel transposition
+  for (int i : MAT_TRANS_CASES) {
+    // for (int i = 2; i < 2048; i += 255) {
+    sprintf(name, "%d", i);
+
+    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
+      int n    = i;
+      float* A = new float[n * n];
+      random_allocation_contiguous(A, n);
+
+      meter.measure([n, A] { return symmetry_check_vec(n, A); });
+
+      delete[] A;
+    };
+  }
+
+  delete[] name;
+}
 class PartialCSVReporter : public Catch::StreamingReporterBase {
  public:
   using StreamingReporterBase::StreamingReporterBase;

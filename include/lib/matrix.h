@@ -11,15 +11,18 @@ void transpose_parallel_collapse(int n, float **A, float **B);
 void transpose_parallel_block(int n, float *A, float *B);
 void transpose_parallel_unroll(int n, float **A, float **B);
 void transpose_vec(int n, float *A, float *B);
-void transpose_block_sse(float *src1, float *dst, int n);
-void transpose_parallel_sse(int n, float *A, float *B);
+void transpose_block_sse(float *src1, float *src2, float *src3, float *src4,
+                         float *dst1, float *dst2, float *dst3, float *dst4);
+
+void transpose_parallel_sse(int n, float **A, float **B);
 
 bool symmetry_check_sequential(int n, float **A);
 bool symmetry_check_parallel(int n, float **A);
 bool symmetry_check_collapse(int n, float **A);
 bool symmetry_check_block(int n, float **A);
 bool symmetry_check_unroll(int n, float **A);
-bool symmetry_check_sse(int n, float **A);
 bool symmetry_check_block_sse(int n, float **A);
+bool symmetry_check_vec(int n, float *A);
 
 void symmetrize(int n, float **A);
+void symmetrize(int n, float *A);
