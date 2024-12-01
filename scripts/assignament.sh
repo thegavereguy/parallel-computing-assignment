@@ -3,7 +3,7 @@
 export BENCHMARK_CONFIDENCE_INTERVAL=0.30
 export BENCH_SAMPLES=10
 export RUN_CACHE_BENCHMARKS=1
-export BUILD_OPTIMIZED=1
+export BUILD_OPTIMIZED=3
 export CLEAR_RESULTS=0
 
 threads=( 1 2 4 8 )
@@ -44,13 +44,16 @@ cd build
 #
 if [ ${build_optimized} == 1 ]; then
 	echo "Building with -O1 optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=ON -DBUILD_OPTIMIZED_O2=OFF ..;
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=ON -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=OFF ..;
 elif [ ${build_optimized} == 2 ]; then
 	echo "Building with -O2 optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON ..;
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=ON -DBUILD_OPTIMIZED_VEC=OFF..;
+elif [ ${build_optimized} == 3 ]; then
+	echo "Building with SIMD optimization";
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
 elif [ ${build_optimized} == 0 ]; then
 	echo "Building with no optimization";
-	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF ..;
+	cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_OPTIMIZED_O1=OFF -DBUILD_OPTIMIZED_O2=OFF -DBUILD_OPTIMIZED_VEC=ON ..;
 else
 	echo "Invalid BUILD_OPTIMIZED value.";
 	exit -2;
