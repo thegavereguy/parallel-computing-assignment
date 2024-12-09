@@ -161,8 +161,7 @@ TEST_CASE("Matrix transposition parallel with block sse",
   deallocate(B, n);
 }
 
-TEST_CASE("Check symmetry of matrix transposition - sequential",
-          "[sym_check_seq]") {
+TEST_CASE("Check symmetry of matrix transposition - sequential", "[sym_seq]") {
   SECTION("verify symmetric") {
     int n     = 16;
     float** A = new float*[n];
@@ -187,9 +186,43 @@ TEST_CASE("Check symmetry of matrix transposition - sequential",
     deallocate(A, n);
   }
 }
+TEST_CASE("Check symmetry of matrix transposition - sequential contiguous",
+          "[sym_seq_cont]") {
+  SECTION("verify symmetric") {
+    int n    = 4;
+    float* A = new float[n * n];
 
-TEST_CASE("Check symmetry of matrix transposition - parallel",
-          "[sym_check_par]") {
+    random_allocation_contiguous(A, n);
+
+    symmetrize(n, A);
+
+    REQUIRE(symmetry_check_sequential_cont(n, A));
+
+    delete[] A;
+  }
+
+  SECTION("verify asymmetric") {
+    int n    = 4;
+    float* A = new float[n * n];
+
+    random_allocation_contiguous(A, n);
+
+    symmetrize(n, A);
+
+    A[6] = -1;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        std::cout << A[i * n + j] << " ";
+      }
+      std::cout << std::endl;
+    }
+    REQUIRE_FALSE(symmetry_check_sequential_cont(n, A));
+
+    delete[] A;
+  }
+}
+
+TEST_CASE("Check symmetry of matrix transposition - parallel", "[sym_par]") {
   SECTION("verify symmetric") {
     int n     = 16;
     float** A = new float*[n];
@@ -215,7 +248,7 @@ TEST_CASE("Check symmetry of matrix transposition - parallel",
 }
 
 TEST_CASE("Check symmetry of matrix transposition - parallel collapse",
-          "[sym_check_par_col]") {
+          "[sym_par_col]") {
   SECTION("verify symmetric") {
     int n     = 16;
     float** A = new float*[n];
@@ -244,8 +277,7 @@ TEST_CASE("Check symmetry of matrix transposition - parallel collapse",
   }
 }
 
-TEST_CASE("Check symmetry of matrix transposition - unroll",
-          "[sym_check_unr]") {
+TEST_CASE("Check symmetry of matrix transposition - unroll", "[sym_par_unr]") {
   SECTION("verify symmetric") {
     int n     = 4;
     float** A = new float*[n];
@@ -272,7 +304,7 @@ TEST_CASE("Check symmetry of matrix transposition - unroll",
     deallocate(A, n);
   }
 }
-TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
+TEST_CASE("Check symmetry of matrix transposition - block", "[sym_par_blk]") {
   SECTION("verify symmetric") {
     int n     = 4;
     float** A = new float*[n];
@@ -300,7 +332,7 @@ TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
   }
 }
 TEST_CASE("Check symmetry of matrix transposition - block contiguous",
-          "[sym_check_vec]") {
+          "[sym_par_blk_cont]") {
   SECTION("verify symmetric") {
     int n    = 4;
     float* A = new float[n * n];

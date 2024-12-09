@@ -121,6 +121,17 @@ bool symmetry_check_sequential(int n, float **A) {
   return true;
 }
 
+bool symmetry_check_sequential_cont(int n, float *A) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (A[i * n + j] != A[j * n + i]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool symmetry_check_parallel(int n, float **A) {
   bool sym = true;
 #pragma omp parallel for shared(sym)

@@ -20,7 +20,7 @@ void transpose_block_sse_single(float *src1, float *src2, float *src3,
 void transpose_parallel_block_sse(int n, float **A, float **B);
 
 bool symmetry_check_sequential(int n, float **A);
-bool symmetry_check_sequential_cont(int n, float **A);
+bool symmetry_check_sequential_cont(int n, float *A);
 bool symmetry_check_parallel(int n, float **A);
 bool symmetry_check_collapse(int n, float **A);
 bool symmetry_check_parallel_block(int n, float **A);
