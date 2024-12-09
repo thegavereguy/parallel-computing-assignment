@@ -150,6 +150,13 @@ for test_name in all_benchmarks["Test"].unique():
             type="linear",  # Linear scale for the secondary axis
         ),
         legend_title="Metric/Thread Count",
+        legend=dict(
+            orientation="h",  # Horizontal legend
+            yanchor="top",  # Align the top of the legend
+            y=-0.2,  # Position the legend below the graph
+            xanchor="center",  # Center the legend horizontally
+            x=0.5,  # Center the legend on the x-axis
+        ),
     )
 
     # Save each plot as an image
