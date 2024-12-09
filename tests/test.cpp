@@ -30,6 +30,24 @@ TEST_CASE("Matrix transposition sequential", "[mat_trans_seq]") {
   deallocate(A, n);
   deallocate(B, n);
 }
+TEST_CASE("Matrix transposition sequential contigous", "[mat_trans_seq_cont]") {
+  int n    = 16;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
+
+  random_allocation_contiguous(A, n);
+
+  transpose_sequential_cont(n, A, B);
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i * n + j] == B[j * n + i]);
+    }
+  }
+
+  delete[] A;
+  delete[] B;
+}
 
 TEST_CASE("Matrix transposition parallel", "[mat_trans_par]") {
   int n     = 16;
@@ -86,24 +104,6 @@ TEST_CASE("Matrix transposition parallel with unroll", "[mat_trans_par_unr]") {
   deallocate(B, n);
 }
 
-TEST_CASE("Matrix transposition with vectorization", "[mat_trans_vec]") {
-  int n    = 16;
-  float* A = new float[n * n];
-  float* B = new float[n * n];
-
-  random_allocation_contiguous(A, n);
-
-  transpose_vec(n, A, B);
-
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      REQUIRE(A[i * n + j] == B[j * n + i]);
-    }
-  }
-
-  delete[] A;
-  delete[] B;
-}
 TEST_CASE("Matrix transposition parallel with block tiling",
           "[mat_trans_par_blk]") {
   int n    = 16;
@@ -112,7 +112,7 @@ TEST_CASE("Matrix transposition parallel with block tiling",
 
   random_allocation_contiguous(A, n);
 
-  transpose_parallel_block(n, A, B);
+  transpose_parallel_block_cont(n, A, B);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       REQUIRE(A[i * n + j] == B[j * n + i]);
@@ -122,6 +122,26 @@ TEST_CASE("Matrix transposition parallel with block tiling",
   delete[] A;
   delete[] B;
 }
+TEST_CASE("Matrix transposition parallel with block tiling contigous",
+          "[mat_trans_seq_cont]") {
+  int n    = 16;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
+
+  random_allocation_contiguous(A, n);
+
+  transpose_parallel_block_cont(n, A, B);
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i * n + j] == B[j * n + i]);
+    }
+  }
+
+  delete[] A;
+  delete[] B;
+}
+
 TEST_CASE("Matrix transposition parallel with block sse",
           "[mat_trans_par_sse]") {
   int n     = 16;
@@ -130,7 +150,7 @@ TEST_CASE("Matrix transposition parallel with block sse",
   random_allocation(A, n);
   empty_allocation(B, n);
 
-  transpose_parallel_sse(n, A, B);
+  transpose_parallel_block_sse(n, A, B);
 
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
@@ -234,7 +254,7 @@ TEST_CASE("Check symmetry of matrix transposition - unroll",
 
     symmetrize(n, A);
 
-    REQUIRE(symmetry_check_unroll(n, A));
+    REQUIRE(symmetry_check_parallel_unroll(n, A));
 
     deallocate(A, n);
   }
@@ -247,7 +267,7 @@ TEST_CASE("Check symmetry of matrix transposition - unroll",
     symmetrize(n, A);
 
     A[3][2] = -1;
-    REQUIRE_FALSE(symmetry_check_unroll(n, A));
+    REQUIRE_FALSE(symmetry_check_parallel_unroll(n, A));
 
     deallocate(A, n);
   }
@@ -261,7 +281,7 @@ TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
 
     symmetrize(n, A);
 
-    REQUIRE(symmetry_check_block(n, A));
+    REQUIRE(symmetry_check_parallel_block(n, A));
 
     deallocate(A, n);
   }
@@ -274,12 +294,13 @@ TEST_CASE("Check symmetry of matrix transposition - block", "[sym_check_blk]") {
     symmetrize(n, A);
 
     A[3][2] = -1;
-    REQUIRE_FALSE(symmetry_check_block(n, A));
+    REQUIRE_FALSE(symmetry_check_parallel_block(n, A));
 
     deallocate(A, n);
   }
 }
-TEST_CASE("Check symmetry of matrix transposition - vec", "[sym_check_vec]") {
+TEST_CASE("Check symmetry of matrix transposition - block contiguous",
+          "[sym_check_vec]") {
   SECTION("verify symmetric") {
     int n    = 4;
     float* A = new float[n * n];
@@ -288,7 +309,7 @@ TEST_CASE("Check symmetry of matrix transposition - vec", "[sym_check_vec]") {
 
     symmetrize(n, A);
 
-    REQUIRE(symmetry_check_vec(n, A));
+    REQUIRE(symmetry_check_parallel_block_cont(n, A));
 
     delete[] A;
   }
@@ -308,7 +329,7 @@ TEST_CASE("Check symmetry of matrix transposition - vec", "[sym_check_vec]") {
       }
       std::cout << std::endl;
     }
-    REQUIRE_FALSE(symmetry_check_vec(n, A));
+    REQUIRE_FALSE(symmetry_check_parallel_block_cont(n, A));
 
     delete[] A;
   }

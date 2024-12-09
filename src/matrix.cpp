@@ -4,11 +4,21 @@
 #include <xmmintrin.h>
 
 #include <cstdio>
+#include <utility>
 
-void transpose_sequential(int n, float **A, float **B) {
+std::pair<double, double> transpose_sequential(int n, float **A, float **B) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       B[i][j] = A[j][i];
+    }
+  }
+  // return the number of flops and data moved
+  return std::make_pair(n * n, n * n * sizeof(float));
+}
+void transpose_sequential_cont(int n, float *A, float *B) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      B[i * n + j] = A[j * n + i];
     }
   }
 }
@@ -31,7 +41,6 @@ void transpose_parallel_collapse(int n, float **A, float **B) {
   }
 }
 
-// matrix transposition with loop unroll
 void transpose_parallel_unroll(int n, float **A, float **B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i++) {
@@ -44,21 +53,25 @@ void transpose_parallel_unroll(int n, float **A, float **B) {
   }
 }
 
-// matrix transposition with vectorization
-void transpose_vec(int n, float *A, float *B) {
-#pragma omp simd
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      B[i * n + j] = A[j * n + i];
+void transpose_parallel_block(int n, float **A, float **B) {
+  int block_size = 4;
+  int i, j, ii, jj;
+#pragma omp parallel for private(ii, jj)
+  for (i = 0; i < n; i += block_size) {
+    for (j = 0; j < n; j += block_size) {
+      for (ii = i; ii < i + block_size; ii++) {
+        for (jj = j; jj < j + block_size; jj++) {
+          B[ii][jj] = A[jj][ii];
+        }
+      }
     }
   }
 }
 
-void transpose_parallel_block(int n, float *A, float *B) {
-  int block_size = 4;  // Block size of 4
+void transpose_parallel_block_cont(int n, float *A, float *B) {
+  int block_size = 4;
   int i, j, ii, jj;
 
-// Parallelize the outer loops
 #pragma omp parallel for private(ii, jj)
   for (i = 0; i < n; i += block_size) {
     for (j = 0; j < n; j += block_size) {
@@ -71,8 +84,9 @@ void transpose_parallel_block(int n, float *A, float *B) {
   }
 }
 
-void transpose_block_sse(float *src1, float *src2, float *src3, float *src4,
-                         float *dst1, float *dst2, float *dst3, float *dst4) {
+void transpose_block_sse_single(float *src1, float *src2, float *src3,
+                                float *src4, float *dst1, float *dst2,
+                                float *dst3, float *dst4) {
   __m128 row1 = _mm_loadu_ps(src1);
   __m128 row2 = _mm_loadu_ps(src2);
   __m128 row3 = _mm_loadu_ps(src3);
@@ -85,12 +99,13 @@ void transpose_block_sse(float *src1, float *src2, float *src3, float *src4,
   _mm_storeu_ps(dst4, row4);
 }
 
-void transpose_parallel_sse(int n, float **A, float **B) {
+void transpose_parallel_block_sse(int n, float **A, float **B) {
 #pragma omp parallel for
   for (int i = 0; i < n; i += 4) {
     for (int j = 0; j < n; j += 4) {
-      transpose_block_sse(&A[i][j], &A[i + 1][j], &A[i + 2][j], &A[i + 3][j],
-                          &B[j][i], &B[j + 1][i], &B[j + 2][i], &B[j + 3][i]);
+      transpose_block_sse_single(&A[i][j], &A[i + 1][j], &A[i + 2][j],
+                                 &A[i + 3][j], &B[j][i], &B[j + 1][i],
+                                 &B[j + 2][i], &B[j + 3][i]);
     }
   }
 }
@@ -134,38 +149,47 @@ bool symmetry_check_collapse(int n, float **A) {
   return sym;
 }
 
-bool symmetry_check_unroll(int n, float **A) {
+bool symmetry_check_parallel_unroll(int n, float **A) {
+  bool sym = true;
+
+#pragma omp parallel for shared(sym)
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j += 4) {
       if (A[i][j] != A[j][i] || A[i][j + 1] != A[j + 1][i] ||
           A[i][j + 2] != A[j + 2][i] || A[i][j + 3] != A[j + 3][i]) {
-        return false;
+#pragma omp critical
+        sym = false;
       }
     }
   }
-  return true;
+  return sym;
 }
 
-bool symmetry_check_block(int n, float **A) {
-  for (int i = 0; i < n; i += 4) {
-    for (int j = 0; j < n; j += 4) {
-      for (int ii = i; ii < i + 4; ii++) {
-        for (int jj = j; jj < j + 4; jj++) {
+bool symmetry_check_parallel_block(int n, float **A) {
+  bool sym       = true;
+  int block_size = 4;
+
+#pragma omp parallel for shared(sym)
+  for (int i = 0; i < n; i += block_size) {
+    for (int j = 0; j < n; j += block_size) {
+      for (int ii = i; ii < i + block_size; ii++) {
+        for (int jj = j; jj < j + block_size; jj++) {
           if (A[ii][jj] != A[jj][ii]) {
-            return false;
+#pragma omp critical
+            sym = false;
           }
         }
       }
     }
   }
-  return true;
+  return sym;
 }
 
-bool symmetry_check_vec(int n, float *A) {
+bool symmetry_check_parallel_block_cont(int n, float *A) {
   bool sym       = true;
   int block_size = 4;
 
-#pragma omp parallel for collapse(2) shared(sym)
+#pragma omp parallel for shared(sym)
   for (int i = 0; i < n; i += block_size) {
     for (int j = 0; j < n; j += block_size) {
       for (int ii = i; ii < i + block_size; ii++) {
