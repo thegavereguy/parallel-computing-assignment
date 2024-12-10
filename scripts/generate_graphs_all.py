@@ -3,89 +3,73 @@ import plotly.graph_objects as go
 import os
 import glob
 
-# Paths to the folders containing results
+
 benchmarks_folder = "results/benchmarks"
 cache_folder = "results/cache"
-benchmarks_pattern = os.path.join(
-    benchmarks_folder, "*.csv"
-)  # Matches all .txt files in benchmarks
-cache_pattern = os.path.join(cache_folder, "*.csv")  # Matches all .csv files in cache
+benchmarks_pattern = os.path.join(benchmarks_folder, "*.csv")
+cache_pattern = os.path.join(cache_folder, "*.csv")
 
-# Create empty DataFrames to hold benchmark and cache data
+
 all_benchmarks = pd.DataFrame()
 all_cache = pd.DataFrame()
 
-# Load benchmark data
+
 for file_path in glob.glob(benchmarks_pattern):
     print(f"Processing file: {file_path}")
-    # Extract the test name and thread number from the filename
+
     file_name = os.path.basename(file_path)
-    test_name_parts = file_name.replace(".csv", "").split(
-        "."
-    )  # Split at '.' to get parts
+    test_name_parts = file_name.replace(".csv", "").split(".")
 
     optimization_level = test_name_parts[1]
 
     test_name = test_name_parts[0]
-    thread_count = (
-        test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
-    )  # Use 'Unknown' if thread count is missing
+    thread_count = test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
 
-    # Load data from the CSV file
     data = pd.read_csv(file_path)
     data["Test"] = test_name
-    data["Threads"] = thread_count  # Add thread count as a column
+    data["Threads"] = thread_count
 
-    # Calculate asymmetric error bars
-    data["ErrorMinus"] = data["MEAN"] - data["MINT"]  # Error on the lower side
-    data["ErrorPlus"] = data["MAXT"] - data["MEAN"]  # Error on the upper side
+    data["ErrorMinus"] = data["MEAN"] - data["MINT"]
+    data["ErrorPlus"] = data["MAXT"] - data["MEAN"]
     data["opt_level"] = optimization_level
 
-    # Append to the main DataFrame
     all_benchmarks = pd.concat([all_benchmarks, data])
 
-# Load cache data
+
 for file_path in glob.glob(cache_pattern):
     print(f"Processing file: {file_path}")
-    # Extract the test name and thread number from the filename
+
     file_name = os.path.basename(file_path)
-    test_name_parts = file_name.replace(".csv", "").split(
-        "."
-    )  # Split at '.' to get parts
+    test_name_parts = file_name.replace(".csv", "").split(".")
     test_name = test_name_parts[0]
     optimization_level = test_name_parts[1]
-    thread_count = (
-        test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
-    )  # Use 'Unknown' if thread count is missing
+    thread_count = test_name_parts[2] if len(test_name_parts) > 1 else "Unknown"
 
-    # Load data from the CSV file
     data = pd.read_csv(file_path)
     data["Test"] = test_name
-    data["Threads"] = thread_count  # Add thread count as a column
+    data["Threads"] = thread_count
 
     data["CacheMissRatio"] = data["CACHEMISS"] / data["CACHEREF"]
     data["opt_level"] = optimization_level
 
-    # Append to the main DataFrame
     all_cache = pd.concat([all_cache, data])
 
-# Convert thread count to string for consistent labeling
+
 all_benchmarks["Threads"] = all_benchmarks["Threads"].astype(str)
 all_cache["Threads"] = all_cache["Threads"].astype(str)
 
-# Create the output folder for images
+
 output_folder = "results/output_images"
 os.makedirs(output_folder, exist_ok=True)
 
-# Generate and save an image plot for each unique test
+
 for test_name in all_benchmarks["Test"].unique():
-    # Filter data for the current test
+
     benchmark_data = all_benchmarks[all_benchmarks["Test"] == test_name]
     cache_data = all_cache[all_cache["Test"] == test_name]
 
     fig = go.Figure()
 
-    # Plot each thread count as a separate line for benchmarks
     for (thread_count, opt_level), thread_data in benchmark_data.groupby(
         ["Threads", "opt_level"]
     ):
@@ -104,8 +88,8 @@ for test_name in all_benchmarks["Test"].unique():
                     arrayminus=thread_data[
                         "ErrorMinus"
                     ],  # Lower error specific to this thread count
-                    color="rgba(255, 0, 0, 0.6)",  # Customize error bar color
-                    thickness=1.5,  # Customize error bar thickness
+                    color="rgba(255, 0, 0, 0.6)",
+                    thickness=1.5,
                 ),
             )
         )
@@ -124,42 +108,37 @@ for test_name in all_benchmarks["Test"].unique():
                     mode="lines+markers",
                     name=f"{test_name} Cache Miss Ratio: {thread_count} threads, opt_level: {opt_level}",
                     yaxis="y2",
-                    line=dict(dash="dot"),  # Linea tratteggiata
+                    line=dict(dash="dot"),
                     hovertemplate="DIMENSION: %{x}<br>Cache Miss Ratio: %{y:.2%}<br>Threads: %{name}<extra></extra>",
                 )
             )
 
-    # Update layout to include secondary y-axis
-
-    # Update layout to include secondary y-axis for cache metrics
     fig.update_layout(
         title=f"Execution Times and Cache Metrics for {test_name}",
         xaxis_title="Matrix Dimension (N)",
         yaxis_title="Mean Execution Time (ms)",
-        yaxis_type="log",  # Set y-axis for execution time to logarithmic scale
-        xaxis_type="log",  # Set y-axis for execution time to logarithmic scale
-        # xaxis_type="log",  # Set y-axis for execution time to logarithmic scale
+        yaxis_type="log",
+        xaxis_type="log",
         yaxis=dict(
             title="Mean Execution Time (ms)",
-            type="log",  # Primary y-axis is logarithmic
+            type="log",
         ),
         yaxis2=dict(
             title="Cache Metrics ()",
-            overlaying="y",  # Overlay on the same graph
-            side="right",  # Place on the right
-            type="linear",  # Linear scale for the secondary axis
+            overlaying="y",
+            side="right",
+            type="linear",
         ),
         legend_title="Metric/Thread Count",
         legend=dict(
-            orientation="h",  # Horizontal legend
-            yanchor="top",  # Align the top of the legend
-            y=-0.2,  # Position the legend below the graph
-            xanchor="center",  # Center the legend horizontally
-            x=0.5,  # Center the legend on the x-axis
+            orientation="h",
+            yanchor="top",
+            y=-0.2,
+            xanchor="center",
+            x=0.5,
         ),
     )
 
-    # Save each plot as an image
     output_path = os.path.join(output_folder, f"{test_name}.png")
     fig.write_image(output_path, format="png", width=1600, height=1000)
     fig.show()
