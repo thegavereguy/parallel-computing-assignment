@@ -111,53 +111,6 @@ void transpose_parallel_block_sse(int n, float **A, float **B) {
   }
 }
 
-void transpose_block_inplace_sse(float *mat, int n, int block_row,
-                                 int block_col) {
-  // Load the 4x4 block
-  __m128 row0 = _mm_loadu_ps(&mat[(block_row + 0) * n + block_col]);
-  __m128 row1 = _mm_loadu_ps(&mat[(block_row + 1) * n + block_col]);
-  __m128 row2 = _mm_loadu_ps(&mat[(block_row + 2) * n + block_col]);
-  __m128 row3 = _mm_loadu_ps(&mat[(block_row + 3) * n + block_col]);
-
-  // Transpose the 4x4 block using SSE
-  __m128 t0 = _mm_unpacklo_ps(row0, row1);  // Interleave row0, row1 (low)
-  __m128 t1 = _mm_unpackhi_ps(row0, row1);  // Interleave row0, row1 (high)
-  __m128 t2 = _mm_unpacklo_ps(row2, row3);  // Interleave row2, row3 (low)
-  __m128 t3 = _mm_unpackhi_ps(row2, row3);  // Interleave row2, row3 (high)
-
-  row0 = _mm_movelh_ps(t0, t2);  // Combine for final column 0 and 1
-  row1 = _mm_movehl_ps(t2, t0);  // Combine for final column 2 and 3
-  row2 = _mm_movelh_ps(t1, t3);  // Combine for final column 4 and 5
-  row3 = _mm_movehl_ps(t3, t1);  // Combine for final column 6 and 7
-
-  // Store transposed block back in-place
-  _mm_storeu_ps(&mat[(block_row + 0) * n + block_col], row0);
-  _mm_storeu_ps(&mat[(block_row + 1) * n + block_col], row1);
-  _mm_storeu_ps(&mat[(block_row + 2) * n + block_col], row2);
-  _mm_storeu_ps(&mat[(block_row + 3) * n + block_col], row3);
-}
-
-// Full in-place transpose for an n x n matrix using SSE
-void transpose_parallel_inplace_sse(int n, float *mat) {
-  constexpr int block_size = 4;
-
-#pragma omp parallel for collapse(2)
-  for (int i = 0; i < n; i += block_size) {
-    for (int j = i + block_size; j < n; j += block_size) {
-      for (int ii = 0; ii < block_size; ++ii) {
-        for (int jj = 0; jj < block_size; ++jj) {
-          // Swap elements (i, j) with (j, i)
-          std::swap(mat[(i + ii) * n + (j + jj)], mat[(j + jj) * n + (i + ii)]);
-        }
-      }
-    }
-  }
-
-  // Process diagonal blocks
-  for (int i = 0; i < n; i += block_size) {
-    transpose_block_inplace_sse(mat, n, i, i);
-  }
-}
 #endif
 // #ifdef __AVX__
 // void transpose_block_avx256(float *src, float *dst, int n, int block_row,

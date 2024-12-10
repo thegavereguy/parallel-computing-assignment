@@ -164,28 +164,6 @@ TEST_CASE("Matrix transposition parallel with block sse",
   deallocate(B, n);
 }
 
-TEST_CASE("Matrix transposition inplace with block sse contigous",
-          "[mat_trans_inplace_sse]") {
-  int n    = 8;
-  float* A = new float[n * n];
-  float* B = new float[n * n];
-
-  random_allocation_contiguous(A, n);
-
-  for (int i = 0; i < n * n; i++) {
-    B[i] = A[i];
-  }
-
-  transpose_parallel_inplace_sse(n, A);
-
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      REQUIRE(A[i * n + j] == B[j * n + i]);
-    }
-  }
-  delete[] A;
-  delete[] B;
-}
 #endif
 
 // #ifdef __AVX__

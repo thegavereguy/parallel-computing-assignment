@@ -205,27 +205,7 @@ TEST_CASE("Matrix transposition parallel with sse instrinsics",
 
   delete[] name;
 }
-TEST_CASE("Matrix transposition in-place parallel with sse instructions",
-          "[mat_trans_parallel_inplace_sse]") {
-  char* name = new char[100];
 
-  // parallel transposition
-  for (int i : MAT_TRANS_CASES) {
-    // for (int i = 2; i < 2048; i += 255) {
-    sprintf(name, "%d", i);
-
-    BENCHMARK_ADVANCED(name)(Catch::Benchmark::Chronometer meter) {
-      int n    = i;
-      float* A = new float[n * n];
-      random_allocation_contiguous(A, n);
-
-      meter.measure([n, A] { return transpose_parallel_inplace_sse(n, A); });
-      delete[] A;
-    };
-  }
-
-  delete[] name;
-}
 #endif
 TEST_CASE("Symmetry check sequential", "[sym_seq]") {
   char* name = new char[100];
