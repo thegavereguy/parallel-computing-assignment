@@ -6,7 +6,7 @@ target_include_directories(test_library PUBLIC ../include)
 target_include_directories(matrix_library PUBLIC ../include)
 target_include_directories(tools_library PUBLIC ../include)
 
-target_compile_options(matrix_library PRIVATE -mavx2)
+target_compile_options(matrix_library PRIVATE -march=native)
 
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)

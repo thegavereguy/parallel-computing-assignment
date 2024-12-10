@@ -10,8 +10,8 @@ target_link_libraries(benchmarks PRIVATE matrix_library)
 target_link_libraries(benchmarks PRIVATE tools_library)
 
 catch_discover_tests(tests)
-target_compile_options(tests PRIVATE -mavx2)
-target_compile_options(benchmarks PRIVATE -mavx2)
+target_compile_options(tests PRIVATE -march=native)
+target_compile_options(benchmarks PRIVATE -march=native)
 
 # catch_discover_tests(benchmarks)
 if (BUILD_OPTIMIZED_O2)
