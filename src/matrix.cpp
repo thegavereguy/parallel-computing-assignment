@@ -109,6 +109,59 @@ void transpose_parallel_block_sse(int n, float **A, float **B) {
     }
   }
 }
+#ifdef __AVX2__
+void transpose_block_avx256(float *src, float *dst, int n, int row, int col) {
+  // Carica 8 righe consecutive del blocco
+  __m256 row0 = _mm256_loadu_ps(&src[(row + 0) * n + col]);
+  __m256 row1 = _mm256_loadu_ps(&src[(row + 1) * n + col]);
+  __m256 row2 = _mm256_loadu_ps(&src[(row + 2) * n + col]);
+  __m256 row3 = _mm256_loadu_ps(&src[(row + 3) * n + col]);
+  __m256 row4 = _mm256_loadu_ps(&src[(row + 4) * n + col]);
+  __m256 row5 = _mm256_loadu_ps(&src[(row + 5) * n + col]);
+  __m256 row6 = _mm256_loadu_ps(&src[(row + 6) * n + col]);
+  __m256 row7 = _mm256_loadu_ps(&src[(row + 7) * n + col]);
+
+  // Interleaving: crea colonne trasposte
+  __m256 tmp0 =
+      _mm256_unpacklo_ps(row0, row1);  // r0[0], r1[0], r0[1], r1[1], ...
+  __m256 tmp1 = _mm256_unpackhi_ps(row0, row1);
+  __m256 tmp2 = _mm256_unpacklo_ps(row2, row3);
+  __m256 tmp3 = _mm256_unpackhi_ps(row2, row3);
+  __m256 tmp4 = _mm256_unpacklo_ps(row4, row5);
+  __m256 tmp5 = _mm256_unpackhi_ps(row4, row5);
+  __m256 tmp6 = _mm256_unpacklo_ps(row6, row7);
+  __m256 tmp7 = _mm256_unpackhi_ps(row6, row7);
+
+  // Shuffle: trasponi verticalmente
+  __m256 col0 =
+      _mm256_shuffle_ps(tmp0, tmp2, 0x44);  // r0[0], r2[0], r1[0], r3[0], ...
+  __m256 col1 = _mm256_shuffle_ps(tmp0, tmp2, 0xEE);
+  __m256 col2 = _mm256_shuffle_ps(tmp1, tmp3, 0x44);
+  __m256 col3 = _mm256_shuffle_ps(tmp1, tmp3, 0xEE);
+  __m256 col4 = _mm256_shuffle_ps(tmp4, tmp6, 0x44);
+  __m256 col5 = _mm256_shuffle_ps(tmp4, tmp6, 0xEE);
+  __m256 col6 = _mm256_shuffle_ps(tmp5, tmp7, 0x44);
+  __m256 col7 = _mm256_shuffle_ps(tmp5, tmp7, 0xEE);
+
+  // Store: salva le colonne trasposte nei blocchi
+  _mm256_storeu_ps(&dst[(col + 0) * n + row], col0);
+  _mm256_storeu_ps(&dst[(col + 1) * n + row], col1);
+  _mm256_storeu_ps(&dst[(col + 2) * n + row], col2);
+  _mm256_storeu_ps(&dst[(col + 3) * n + row], col3);
+  _mm256_storeu_ps(&dst[(col + 4) * n + row], col4);
+  _mm256_storeu_ps(&dst[(col + 5) * n + row], col5);
+  _mm256_storeu_ps(&dst[(col + 6) * n + row], col6);
+  _mm256_storeu_ps(&dst[(col + 7) * n + row], col7);
+}
+void transpose_avx256(int n, float *A, float *B) {
+  int block_size = 8;
+  for (int i = 0; i < n; i += block_size) {
+    for (int j = 0; j < n; j += block_size) {
+      transpose_block_avx256(A, B, n, i, j);
+    }
+  }
+}
+#endif
 
 bool symmetry_check_sequential(int n, float **A) {
   for (int i = 0; i < n; i++) {

@@ -161,6 +161,39 @@ TEST_CASE("Matrix transposition parallel with block sse",
   deallocate(B, n);
 }
 
+#ifdef __AVX2__
+
+TEST_CASE("Matrix transposition parallel with block tiling and avx256",
+          "[mat_trans_par_avx]") {
+  int n    = 8;
+  float* A = new float[n * n];
+  float* B = new float[n * n];
+
+  random_allocation_contiguous(A, n);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      std::cout << A[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  transpose_avx256(n, A, B);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      std::cout << A[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      REQUIRE(A[i * n + j] == B[j * n + i]);
+    }
+  }
+
+  delete[] A;
+  delete[] B;
+}
+#endif
 TEST_CASE("Check symmetry of matrix transposition - sequential", "[sym_seq]") {
   SECTION("verify symmetric") {
     int n     = 16;
