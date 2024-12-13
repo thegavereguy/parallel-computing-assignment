@@ -24,6 +24,11 @@ except ValueError:
     )
     exit()
 
+try:
+    chart_name = input("Enter the name of the chart: ")
+except ValueError:
+    print("Invalid input. Please enter a valid name for the chart.")
+    exit()
 
 all_benchmarks = pd.DataFrame()
 
@@ -95,7 +100,7 @@ fig.add_trace(
 
 
 fig.update_layout(
-    title="Memory Bandwidth vs Matrix Dimension",
+    title=chart_name,
     xaxis_title="Matrix Dimension (N)",
     yaxis_title="Memory Bandwidth (GB/s)",
     xaxis_type="log",
@@ -107,6 +112,7 @@ fig.update_layout(
         y=-0.2,
         xanchor="center",
         x=0.5,
+        font=dict(size=15),
     ),
 )
 

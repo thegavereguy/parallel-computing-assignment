@@ -16,6 +16,12 @@ def select_files(title, filetypes):
 all_benchmarks = pd.DataFrame()
 all_cache = pd.DataFrame()
 
+try:
+    chart_name = input("Enter the name of the chart: ")
+except ValueError:
+    print("Invalid input. Please enter a valid name for the chart.")
+    exit()
+
 
 benchmark_files = select_files("Select Benchmark CSV Files", [("CSV Files", "*.csv")])
 if benchmark_files:
@@ -120,7 +126,7 @@ else:
             )
 
     fig.update_layout(
-        title="Execution Times and Cache Metrics",
+        title=chart_name,
         xaxis_title="Matrix Dimension (N)",
         yaxis_title="Mean Execution Time (ms)",
         yaxis_type="log",
@@ -142,6 +148,7 @@ else:
             y=-0.2,
             xanchor="center",
             x=0.5,
+            font=dict(size=15),
         ),
     )
 
